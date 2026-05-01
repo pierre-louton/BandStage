@@ -1,0 +1,218 @@
+========================================================================
+BANDSTAGE — Guide de déploiement SVN WordPress.org
+========================================================================
+
+Ce fichier est destiné au développeur et ne sera PAS inclus dans
+le dossier trunk/ lors du commit SVN (ajoutez-le à svn:ignore).
+
+------------------------------------------------------------------------
+PRÉREQUIS
+------------------------------------------------------------------------
+
+1. Avoir un compte sur https://wordpress.org/
+2. Avoir soumis le plugin via https://wordpress.org/plugins/developers/add/
+   et attendu l'approbation (délai habituel : quelques jours à quelques semaines)
+3. Installer le client SVN en ligne de commande :
+   - macOS  : brew install subversion
+   - Ubuntu : sudo apt install subversion
+   - Windows: TortoiseSVN (GUI) ou SlikSVN (CLI)
+
+
+------------------------------------------------------------------------
+STRUCTURE SVN (après approbation WP.org)
+------------------------------------------------------------------------
+
+https://plugins.svn.wordpress.org/bandstage/
+├── trunk/          ← Version de développement stable (≈ branche main Git)
+├── tags/
+│   ├── 1.0.0/      ← Snapshot de chaque version publiée
+│   └── 1.0.1/
+└── assets/         ← Visuels WP.org UNIQUEMENT (hors du plugin .zip)
+    ├── icon-128x128.png
+    ├── icon-256x256.png
+    ├── banner-772x250.png
+    ├── banner-1544x500.png  (Retina)
+    └── screenshot-1.png … screenshot-5.png
+
+
+------------------------------------------------------------------------
+ÉTAPE 1 — CHECKOUT INITIAL (une seule fois)
+------------------------------------------------------------------------
+
+# Crée un dossier local pour le dépôt SVN (distinct de votre dépôt Git)
+svn checkout https://plugins.svn.wordpress.org/bandstage/ ~/svn-bandstage
+
+# Vérifier que le checkout a fonctionné
+ls ~/svn-bandstage/
+# Doit afficher : assets/  tags/  trunk/
+
+
+------------------------------------------------------------------------
+ÉTAPE 2 — PREMIER COMMIT (version 1.0.0)
+------------------------------------------------------------------------
+
+# Depuis votre dépôt Git, copiez les fichiers dans trunk/
+# (excluez .git, node_modules, .env, ce fichier SVN-GUIDE.txt)
+rsync -av --exclude='.git' \
+          --exclude='node_modules' \
+          --exclude='.env' \
+          --exclude='SVN-GUIDE.txt' \
+          /chemin/vers/votre/bandstage/ \
+          ~/svn-bandstage/trunk/
+
+# Vérifier le statut (? = nouveau fichier, M = modifié)
+svn status ~/svn-bandstage/trunk/
+
+# Ajouter les nouveaux fichiers (à faire à chaque nouveau fichier)
+svn add ~/svn-bandstage/trunk/* --force
+
+# Commit sur trunk
+svn commit ~/svn-bandstage/trunk/ \
+  -m "Version initiale 1.0.0" \
+  --username VOTRE_USERNAME_WORDPRESS
+
+# WP.org vous demandera votre mot de passe WordPress.org.
+
+
+------------------------------------------------------------------------
+ÉTAPE 3 — TAGUER UNE VERSION (obligatoire pour la publication)
+------------------------------------------------------------------------
+
+# Le tag déclenche la mise à disposition sur le répertoire WP.org.
+# Le numéro de version DOIT correspondre à « Stable tag » dans readme.txt.
+
+svn copy https://plugins.svn.wordpress.org/bandstage/trunk \
+         https://plugins.svn.wordpress.org/bandstage/tags/1.0.0 \
+  -m "Tagging version 1.0.0" \
+  --username VOTRE_USERNAME_WORDPRESS
+
+# Vérifier que le tag est créé
+svn list https://plugins.svn.wordpress.org/bandstage/tags/
+
+
+------------------------------------------------------------------------
+ÉTAPE 4 — AJOUTER LES ASSETS VISUELS WP.org
+------------------------------------------------------------------------
+
+# Les assets (icônes, bannières, screenshots) vont dans /assets/
+# Ils ne font PAS partie du .zip téléchargé par les utilisateurs.
+
+cp icon-128x128.png       ~/svn-bandstage/assets/
+cp icon-256x256.png       ~/svn-bandstage/assets/
+cp banner-772x250.png     ~/svn-bandstage/assets/
+cp banner-1544x500.png    ~/svn-bandstage/assets/
+cp screenshot-1.png       ~/svn-bandstage/assets/
+# ... etc.
+
+svn add ~/svn-bandstage/assets/* --force
+svn commit ~/svn-bandstage/assets/ \
+  -m "Ajout icônes et screenshots" \
+  --username VOTRE_USERNAME_WORDPRESS
+
+# Spécifications des visuels :
+# icon-128x128.png    : 128×128 px, PNG ou JPG
+# icon-256x256.png    : 256×256 px (Retina)
+# banner-772x250.png  : 772×250 px
+# banner-1544x500.png : 1544×500 px (Retina)
+# screenshots        : PNG/JPG, ratio libre, numérotés 1..N
+# AUCUN SVG n'est accepté pour les assets.
+
+
+------------------------------------------------------------------------
+WORKFLOW RECOMMANDÉ : Git + SVN en parallèle
+------------------------------------------------------------------------
+
+Développement quotidien → Git (GitHub/GitLab) comme d'habitude.
+Publication uniquement → SVN, uniquement du code finalisé.
+
+Schéma :
+
+  [Git main] ──── release ────► [svn/trunk] ──── tag ──► [svn/tags/X.Y.Z]
+       │                                                         │
+       └── feature branches                           Visible sur WP.org
+
+Règle d'or WP.org : NE JAMAIS pousser du code en développement sur SVN.
+SVN = production uniquement.
+
+
+------------------------------------------------------------------------
+ÉTAPE 5 — MISE À JOUR (version 1.0.1, 1.1.0…)
+------------------------------------------------------------------------
+
+# 1. Mettre à jour la version dans bandstage.php :
+#    * Version: 1.0.1
+# 2. Mettre à jour readme.txt :
+#    * Stable tag: 1.0.1
+#    * Ajouter l'entrée dans == Changelog ==
+# 3. Synchroniser trunk
+
+svn update ~/svn-bandstage/trunk/
+
+rsync -av --exclude='.git' \
+          --exclude='node_modules' \
+          --exclude='.env' \
+          --exclude='SVN-GUIDE.txt' \
+          /chemin/vers/votre/bandstage/ \
+          ~/svn-bandstage/trunk/
+
+# Pour les fichiers supprimés de Git, les supprimer aussi de SVN :
+svn delete ~/svn-bandstage/trunk/fichier-supprime.php
+
+svn commit ~/svn-bandstage/trunk/ \
+  -m "Version 1.0.1 — correctif bug ticker" \
+  --username VOTRE_USERNAME_WORDPRESS
+
+# 4. Créer le tag
+svn copy https://plugins.svn.wordpress.org/bandstage/trunk \
+         https://plugins.svn.wordpress.org/bandstage/tags/1.0.1 \
+  -m "Tagging version 1.0.1" \
+  --username VOTRE_USERNAME_WORDPRESS
+
+
+------------------------------------------------------------------------
+COMMANDES SVN UTILES
+------------------------------------------------------------------------
+
+# Voir le statut du working copy
+svn status ~/svn-bandstage/
+
+# Voir les différences avant commit
+svn diff ~/svn-bandstage/trunk/
+
+# Lister les tags existants
+svn list https://plugins.svn.wordpress.org/bandstage/tags/
+
+# Voir l'historique des commits
+svn log https://plugins.svn.wordpress.org/bandstage/
+
+# Annuler des modifications locales non commitées
+svn revert ~/svn-bandstage/trunk/fichier.php
+
+# Ignorer des fichiers (node_modules, .DS_Store…)
+svn propset svn:ignore "node_modules
+.DS_Store
+.env
+SVN-GUIDE.txt" ~/svn-bandstage/trunk/
+
+
+------------------------------------------------------------------------
+CHECKLIST AVANT SOUMISSION WP.org
+------------------------------------------------------------------------
+
+[ ] Slug unique vérifié sur https://wordpress.org/plugins/ (bandstage)
+[ ] readme.txt complet (Description, Installation, FAQ, Changelog, Screenshots)
+[ ] Stable tag == Version dans le header PHP
+[ ] Licence GPL v2 ou supérieure explicitement déclarée
+[ ] Pas de code encodé (base64_decode, eval…)
+[ ] Pas de liens publicitaires sans consentement explicite
+[ ] Toutes les sorties HTML échappées (esc_html, esc_attr, esc_url)
+[ ] Toutes les entrées utilisateur sanitisées
+[ ] Tous les appels AJAX protégés par nonce + capability check
+[ ] Pas d'appels à des services externes non documentés
+[ ] Text domain == slug du plugin ('bandstage')
+[ ] Fichier uninstall.php présent et fonctionnel
+[ ] Testé sur WordPress 6.2+ et PHP 8.1+
+[ ] Plugin Checker passé : https://wordpress.org/plugins/plugin-check/
+[ ] Assets WP.org prêts (icônes, bannières, screenshots)
+
+========================================================================

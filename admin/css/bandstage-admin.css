@@ -1,0 +1,773 @@
+/*
+ * BandStage — Administration CSS
+ * @author Pierre Beaubié
+ */
+
+/* =========================================================================
+   VARIABLES & RESET
+   ========================================================================= */
+.bs-admin-wrap {
+	--bs-blue:       #1535A8;
+	--bs-blue-light: #3a5fc8;
+	--bs-gold:       #D4A820;
+	--bs-gold-light: #EFC84A;
+	--bs-red:        #e24b4a;
+	--bs-green:      #2da52d;
+	--bs-gray-100:   #f9f9f9;
+	--bs-gray-200:   #f0f0f0;
+	--bs-gray-300:   #e0e0e0;
+	--bs-gray-500:   #999;
+	--bs-gray-700:   #555;
+	--bs-shadow-sm:  0 1px 3px rgba(0,0,0,.08);
+	--bs-shadow-md:  0 4px 12px rgba(0,0,0,.10);
+	--bs-radius:     6px;
+
+	max-width: 920px;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* =========================================================================
+   EN-TÊTE H1
+   ========================================================================= */
+.bs-admin-wrap h1 {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 4px;
+}
+.bs-logo   { font-size: 26px; line-height: 1; }
+.bs-version {
+	font-size: 12px;
+	font-weight: 400;
+	color: var(--bs-gray-500);
+	background: var(--bs-gray-200);
+	padding: 2px 7px;
+	border-radius: 12px;
+	margin-left: 2px;
+}
+
+/* =========================================================================
+   ONGLETS DE NAVIGATION
+   ========================================================================= */
+.bs-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 3px;
+	margin: 18px 0 0;
+	border-bottom: 2px solid var(--bs-gray-300);
+	padding-bottom: 0;
+}
+
+.bs-tab {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 9px 16px;
+	border-radius: var(--bs-radius) var(--bs-radius) 0 0;
+	text-decoration: none;
+	color: var(--bs-gray-700);
+	font-size: 13px;
+	font-weight: 500;
+	background: var(--bs-gray-100);
+	border: 1px solid var(--bs-gray-300);
+	border-bottom: 2px solid transparent;
+	margin-bottom: -2px;
+	transition: background .15s, color .15s, border-color .15s;
+	white-space: nowrap;
+}
+.bs-tab:hover {
+	background: #fff;
+	color: var(--bs-blue);
+	border-color: var(--bs-gray-300);
+	border-bottom-color: transparent;
+}
+.bs-tab--active {
+	background: #fff;
+	color: var(--bs-blue);
+	font-weight: 700;
+	border-color: var(--bs-gray-300);
+	border-top: 3px solid var(--bs-gold);
+	border-bottom: 2px solid #fff;
+}
+
+/* =========================================================================
+   FORMULAIRE PRINCIPAL
+   ========================================================================= */
+.bs-settings-form {
+	background: #fff;
+	border: 1px solid var(--bs-gray-300);
+	border-top: none;
+	border-radius: 0 0 var(--bs-radius) var(--bs-radius);
+	padding: 28px 28px 20px;
+	margin-top: 0;
+	box-shadow: var(--bs-shadow-sm);
+}
+
+.bs-settings-form .form-table { margin-top: 0; }
+.bs-settings-form .form-table th {
+	width: 230px;
+	font-weight: 600;
+	font-size: 13px;
+	color: #333;
+	vertical-align: top;
+	padding-top: 16px;
+}
+.bs-settings-form .form-table td {
+	vertical-align: top;
+	padding: 12px 10px 12px 0;
+}
+.bs-settings-form .description {
+	color: var(--bs-gray-500);
+	font-size: 12px;
+	margin-top: 5px;
+	line-height: 1.5;
+}
+.bs-settings-form .form-table tr {
+	border-bottom: 1px solid var(--bs-gray-200);
+}
+.bs-settings-form .form-table tr:last-child { border-bottom: none; }
+
+/* =========================================================================
+   SECTIONS DANS LES ONGLETS
+   ========================================================================= */
+.bs-section {
+	border: 1px solid var(--bs-gray-300);
+	border-radius: var(--bs-radius);
+	margin-bottom: 22px;
+	overflow: hidden;
+	box-shadow: var(--bs-shadow-sm);
+	transition: box-shadow .15s;
+}
+.bs-section:focus-within {
+	box-shadow: 0 0 0 2px rgba(21,53,168,.15), var(--bs-shadow-sm);
+}
+
+.bs-section__head {
+	background: linear-gradient(to right, var(--bs-gray-100), #fff);
+	border-bottom: 1px solid var(--bs-gray-300);
+	padding: 12px 18px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+.bs-section__title {
+	font-weight: 700;
+	font-size: 13px;
+	color: var(--bs-blue);
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+.bs-section__body { padding: 0; }
+.bs-section__body .form-table { margin: 0; }
+.bs-section__body .form-table th { padding-left: 18px; }
+.bs-section__body .form-table td { padding-right: 18px; }
+.bs-section__body .form-table tr { border-bottom: 1px solid var(--bs-gray-200); }
+.bs-section__body .form-table tr:last-child { border-bottom: none; }
+
+/* Badge numérotation boîte */
+.bs-box-num {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background: var(--bs-blue);
+	color: #fff;
+	font-size: 11px;
+	font-weight: 700;
+	flex-shrink: 0;
+}
+
+/* =========================================================================
+   COLOR PICKER — override wp-color-picker pour un rendu plus soigné
+   ========================================================================= */
+
+/* Conteneur principal généré par WP */
+.wp-picker-container {
+	display: inline-flex !important;
+	align-items: center;
+	gap: 6px;
+	flex-wrap: nowrap;
+}
+
+/* Bouton swatch (carré coloré) */
+.wp-picker-container .wp-color-result.button {
+	border-radius: var(--bs-radius) !important;
+	border: 1px solid var(--bs-gray-300) !important;
+	box-shadow: var(--bs-shadow-sm) !important;
+	transition: box-shadow .15s, transform .1s !important;
+	height: 32px !important;
+	padding: 0 10px 0 34px !important; /* espace pour la couleur */
+	cursor: pointer !important;
+	font-size: 12px !important;
+	color: #555 !important;
+	background: #fff !important;
+}
+.wp-picker-container .wp-color-result.button:hover {
+	box-shadow: 0 2px 8px rgba(0,0,0,.15) !important;
+	transform: translateY(-1px) !important;
+}
+.wp-picker-container .wp-color-result.button:focus {
+	border-color: var(--bs-blue) !important;
+	box-shadow: 0 0 0 2px rgba(21,53,168,.2) !important;
+}
+
+/* Le carré de couleur à l'intérieur du bouton */
+.wp-picker-container .wp-color-result-text {
+	line-height: 30px !important;
+}
+
+/* Bouton "Effacer" à côté du swatch */
+.wp-picker-container .wp-picker-clear {
+	height: 32px !important;
+	font-size: 12px !important;
+	border-radius: var(--bs-radius) !important;
+}
+
+/* Popover de la roue chromatique */
+.wp-picker-container .iris-picker {
+	border: 1px solid var(--bs-gray-300) !important;
+	border-radius: var(--bs-radius) !important;
+	box-shadow: var(--bs-shadow-md) !important;
+	margin-top: 4px !important;
+	overflow: hidden;
+}
+
+/* Champ hex dans le picker */
+.wp-picker-container .iris-picker .iris-palette-container {
+	padding: 6px !important;
+}
+
+/* Slider de la roue */
+.wp-picker-container .iris-picker .iris-strip {
+	border-radius: 4px !important;
+}
+
+/* Palettes de couleurs prédéfinies dans iris */
+.wp-picker-container .iris-picker .iris-palette {
+	border-radius: 3px !important;
+	cursor: pointer;
+	transition: transform .1s;
+}
+.wp-picker-container .iris-picker .iris-palette:hover {
+	transform: scale(1.15);
+}
+
+/* Zone d'aperçu couleur */
+.wp-picker-container .wp-picker-input-wrap {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin-top: 6px;
+}
+.wp-picker-container .wp-picker-input-wrap .wp-picker-clear {
+	flex-shrink: 0;
+}
+
+/* Input hex dans la zone de saisie directe */
+.iris-picker .iris-picker-inner input[type="text"] {
+	font-family: "Courier New", monospace !important;
+	font-size: 12px !important;
+	padding: 3px 6px !important;
+	border-radius: 4px !important;
+	border: 1px solid var(--bs-gray-300) !important;
+	letter-spacing: .05em;
+}
+.iris-picker .iris-picker-inner input[type="text"]:focus {
+	border-color: var(--bs-blue) !important;
+	box-shadow: 0 0 0 2px rgba(21,53,168,.15) !important;
+	outline: none !important;
+}
+
+/* Paire de color pickers (départ + arrivée) */
+.bs-color-pair {
+	display: flex;
+	align-items: flex-end;
+	gap: 20px;
+	flex-wrap: wrap;
+}
+.bs-color-item {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+.bs-color-item > label {
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--bs-gray-500);
+	text-transform: uppercase;
+	letter-spacing: .05em;
+}
+
+/* Preview du dégradé de fond */
+#bs-bg-preview {
+	margin-top: 12px;
+	width: 100%;
+	height: 52px;
+	border-radius: var(--bs-radius);
+	border: 1px solid var(--bs-gray-300);
+	transition: background .4s ease;
+	box-shadow: var(--bs-shadow-sm);
+	position: relative;
+	overflow: hidden;
+}
+#bs-bg-preview::after {
+	content: "Prévisualisation du fond";
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 11px;
+	color: rgba(255,255,255,.5);
+	letter-spacing: .08em;
+	text-transform: uppercase;
+}
+
+/* =========================================================================
+   TOGGLE CHECKBOX — style iOS moderne
+   ========================================================================= */
+.bs-toggle-wrap {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	cursor: pointer;
+}
+.bs-toggle-label {
+	font-size: 13px;
+	color: #333;
+	cursor: pointer;
+	user-select: none;
+}
+input[type="checkbox"].bs-toggle-input {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+.bs-toggle-track {
+	display: inline-block;
+	width: 42px;
+	height: 24px;
+	background: #cbd2d9;
+	border-radius: 12px;
+	position: relative;
+	cursor: pointer;
+	transition: background .22s, box-shadow .15s;
+	flex-shrink: 0;
+	box-shadow: inset 0 1px 3px rgba(0,0,0,.12);
+}
+.bs-toggle-track::after {
+	content: "";
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	width: 18px;
+	height: 18px;
+	background: #fff;
+	border-radius: 50%;
+	transition: transform .22s cubic-bezier(.34,1.56,.64,1);
+	box-shadow: 0 1px 4px rgba(0,0,0,.25);
+}
+
+/* Focus visible */
+input[type="checkbox"].bs-toggle-input:focus-visible + .bs-toggle-track {
+	box-shadow: 0 0 0 3px rgba(21,53,168,.25), inset 0 1px 3px rgba(0,0,0,.12);
+}
+
+/* État ON */
+input[type="checkbox"].bs-toggle-input:checked + .bs-toggle-track {
+	background: var(--bs-blue);
+	box-shadow: inset 0 1px 3px rgba(0,0,0,.1);
+}
+input[type="checkbox"].bs-toggle-input:checked + .bs-toggle-track::after {
+	transform: translateX(18px);
+}
+
+/* Variante gold pour les toggles en header de section */
+.bs-section__head .bs-toggle-track { }
+.bs-section__head input[type="checkbox"].bs-toggle-input:checked + .bs-toggle-track {
+	background: var(--bs-gold);
+}
+
+/* =========================================================================
+   SLIDER RANGE
+   ========================================================================= */
+input[type="range"].bs-range,
+.bs-settings-form input[type="range"] {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 200px;
+	height: 5px;
+	border-radius: 3px;
+	background: linear-gradient(to right, var(--bs-blue) 0%, var(--bs-blue) var(--val, 50%), #dde0e8 var(--val, 50%));
+	outline: none;
+	cursor: pointer;
+	vertical-align: middle;
+}
+input[type="range"]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	background: #fff;
+	border: 2px solid var(--bs-blue);
+	box-shadow: 0 1px 4px rgba(0,0,0,.2);
+	cursor: pointer;
+	transition: transform .1s;
+}
+input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+input[type="range"]::-moz-range-thumb {
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	background: #fff;
+	border: 2px solid var(--bs-blue);
+	box-shadow: 0 1px 4px rgba(0,0,0,.2);
+	cursor: pointer;
+}
+
+/* Valeur numérique affichée à côté */
+.bs-range-val {
+	display: inline-block;
+	min-width: 32px;
+	text-align: center;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--bs-blue);
+	background: rgba(21,53,168,.07);
+	border-radius: 4px;
+	padding: 1px 6px;
+	vertical-align: middle;
+	margin-left: 6px;
+}
+
+/* =========================================================================
+   MEDIA UPLOADER
+   ========================================================================= */
+.bs-media-field {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	flex-wrap: wrap;
+}
+.bs-media-preview {
+	width: 88px;
+	height: 88px;
+	border: 2px dashed var(--bs-gray-300);
+	border-radius: var(--bs-radius);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	background: var(--bs-gray-100);
+	flex-shrink: 0;
+	transition: border-color .15s;
+	position: relative;
+}
+.bs-media-preview:hover { border-color: var(--bs-blue); }
+.bs-media-preview img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border-radius: 4px;
+}
+.bs-media-preview.is-empty::after {
+	content: "📷";
+	font-size: 26px;
+	opacity: .3;
+}
+.bs-media-actions {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+.bs-media-actions .button {
+	font-size: 12px !important;
+}
+
+/* =========================================================================
+   ICON SELECT (pictogrammes boîtes)
+   ========================================================================= */
+.bs-icon-select {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+.bs-icon-option { display: none; }
+
+.bs-icon-option + label {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 5px;
+	padding: 10px 14px;
+	border: 2px solid var(--bs-gray-300);
+	border-radius: var(--bs-radius);
+	cursor: pointer;
+	font-size: 11px;
+	font-weight: 500;
+	color: var(--bs-gray-700);
+	transition: border-color .15s, background .15s, color .15s, transform .1s;
+	min-width: 72px;
+	text-align: center;
+	background: #fff;
+	box-shadow: var(--bs-shadow-sm);
+}
+.bs-icon-option + label:hover {
+	border-color: var(--bs-blue-light);
+	background: #f0f4ff;
+	color: var(--bs-blue);
+	transform: translateY(-1px);
+}
+.bs-icon-option:checked + label {
+	border-color: var(--bs-blue);
+	background: rgba(21,53,168,.07);
+	color: var(--bs-blue);
+	font-weight: 700;
+	box-shadow: 0 0 0 3px rgba(21,53,168,.12);
+}
+.bs-icon-option + label .dashicons {
+	font-size: 22px;
+	width: 22px;
+	height: 22px;
+	color: inherit;
+}
+
+/* =========================================================================
+   CHAMPS TEXTE & SELECT natifs
+   ========================================================================= */
+.bs-settings-form input[type="text"],
+.bs-settings-form input[type="email"],
+.bs-settings-form input[type="url"],
+.bs-settings-form input[type="number"],
+.bs-settings-form input[type="password"],
+.bs-settings-form textarea,
+.bs-settings-form select {
+	border-radius: var(--bs-radius) !important;
+	border-color: var(--bs-gray-300) !important;
+	box-shadow: var(--bs-shadow-sm) !important;
+	transition: border-color .15s, box-shadow .15s !important;
+}
+.bs-settings-form input[type="text"]:focus,
+.bs-settings-form input[type="email"]:focus,
+.bs-settings-form input[type="url"]:focus,
+.bs-settings-form input[type="number"]:focus,
+.bs-settings-form input[type="password"]:focus,
+.bs-settings-form textarea:focus,
+.bs-settings-form select:focus {
+	border-color: var(--bs-blue) !important;
+	box-shadow: 0 0 0 2px rgba(21,53,168,.15) !important;
+	outline: none !important;
+}
+
+.bs-settings-form textarea {
+	line-height: 1.55 !important;
+	resize: vertical !important;
+}
+.bs-settings-form textarea.code {
+	font-family: "Courier New", "Lucida Console", monospace !important;
+	font-size: 12px !important;
+	background: #1e1e2e !important;
+	color: #cdd6f4 !important;
+	border-color: #3a3a5c !important;
+}
+.bs-settings-form textarea.code:focus {
+	border-color: var(--bs-gold) !important;
+	box-shadow: 0 0 0 2px rgba(212,168,32,.2) !important;
+}
+
+/* Sélect amélioré */
+.bs-settings-form select {
+	min-width: 240px;
+	padding: 6px 10px !important;
+	height: auto !important;
+	font-size: 13px !important;
+}
+
+/* =========================================================================
+   BOUTON SUBMIT
+   ========================================================================= */
+.bs-settings-form .button-primary {
+	border-radius: var(--bs-radius) !important;
+	padding: 8px 20px !important;
+	height: auto !important;
+	font-size: 13px !important;
+	font-weight: 600 !important;
+	background: var(--bs-blue) !important;
+	border-color: var(--bs-blue) !important;
+	box-shadow: 0 2px 6px rgba(21,53,168,.25) !important;
+	transition: opacity .15s, transform .1s, box-shadow .15s !important;
+}
+.bs-settings-form .button-primary:hover {
+	opacity: .9 !important;
+	transform: translateY(-1px) !important;
+	box-shadow: 0 4px 10px rgba(21,53,168,.3) !important;
+}
+.bs-settings-form .button-primary:active {
+	transform: translateY(0) !important;
+}
+
+/* =========================================================================
+   SHORTCODE BOX
+   ========================================================================= */
+.bs-shortcode-box {
+	background: linear-gradient(135deg, #f0f4ff, #f9f9f9);
+	border: 1px solid #d0d9f5;
+	border-left: 4px solid var(--bs-blue);
+	border-radius: 0 var(--bs-radius) var(--bs-radius) 0;
+	padding: 16px 20px;
+	margin-top: 22px;
+	box-shadow: var(--bs-shadow-sm);
+}
+.bs-shortcode-box h3 {
+	margin: 0 0 10px;
+	font-size: 13px;
+	color: var(--bs-blue);
+}
+.bs-shortcode-box code {
+	display: inline-block;
+	background: var(--bs-blue);
+	color: var(--bs-gold-light);
+	padding: 3px 10px;
+	border-radius: 4px;
+	font-size: 13px;
+	font-family: "Courier New", monospace;
+	letter-spacing: .02em;
+}
+.bs-shortcode-box br { margin-bottom: 6px; }
+
+/* =========================================================================
+   IMPORT / EXPORT
+   ========================================================================= */
+.bs-io-wrap {
+	display: flex;
+	gap: 20px;
+	flex-wrap: wrap;
+}
+.bs-io-block {
+	flex: 1;
+	min-width: 220px;
+	background: var(--bs-gray-100);
+	border: 1px solid var(--bs-gray-300);
+	border-radius: var(--bs-radius);
+	padding: 16px;
+}
+.bs-io-block h4 {
+	margin: 0 0 8px;
+	font-size: 13px;
+	font-weight: 700;
+	color: #333;
+}
+.bs-io-block p {
+	font-size: 12px;
+	color: var(--bs-gray-500);
+	margin: 0 0 12px;
+	line-height: 1.5;
+}
+.bs-io-block input[type="file"] {
+	font-size: 12px;
+	color: var(--bs-gray-700);
+}
+
+/* =========================================================================
+   NOTICES INLINE
+   ========================================================================= */
+.bs-notice {
+	padding: 9px 14px;
+	border-radius: var(--bs-radius);
+	font-size: 12px;
+	font-weight: 500;
+	margin-top: 10px;
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	animation: bs-fadein .2s ease;
+}
+@keyframes bs-fadein {
+	from { opacity: 0; transform: translateY(-4px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+.bs-notice::before { font-size: 14px; }
+.bs-notice--ok {
+	background: #edfaef;
+	color: #1a7a1a;
+	border: 1px solid #b8e8b8;
+}
+.bs-notice--ok::before { content: "✓"; }
+.bs-notice--err {
+	background: #fdf0f0;
+	color: #8b1a1a;
+	border: 1px solid #f0b8b8;
+}
+.bs-notice--err::before { content: "✕"; }
+
+/* =========================================================================
+   PAGES MODÉRATION (Tchache & Membres)
+   ========================================================================= */
+
+/* Statuts colorés */
+.bs-status-pending  { color: #8a6000; background: #fff3cd; border-color: #ffc107; }
+.bs-status-approved { color: #155724; background: #d4edda; border-color: #28a745; }
+.bs-status-spam     { color: #721c24; background: #f8d7da; border-color: #dc3545; }
+.bs-status-deleted  { color: #666;    background: #f0f0f0; border-color: #ccc; }
+
+/* Tableau de modération */
+#bs-messages-table td,
+#bs-members-table td {
+	vertical-align: middle !important;
+	padding: 10px 8px !important;
+}
+#bs-messages-table td:first-child,
+#bs-members-table td:first-child {
+	width: 32px;
+	padding: 10px 4px 10px 12px !important;
+}
+
+/* Bulles de contenu tronqué */
+.bs-msg-content {
+	font-size: 13px;
+	line-height: 1.5;
+	color: #333;
+}
+
+/* Boutons d'action inline */
+#bs-messages-table .button-small,
+#bs-members-table .button-small {
+	border-radius: 4px !important;
+	font-size: 11px !important;
+	padding: 3px 8px !important;
+	height: auto !important;
+	line-height: 1.4 !important;
+	transition: opacity .15s !important;
+}
+#bs-messages-table .button-small:hover,
+#bs-members-table .button-small:hover {
+	opacity: .8 !important;
+}
+
+/* =========================================================================
+   ZONE DANGEREUSE
+   ========================================================================= */
+.bs-section[style*="border-color:#e24b4a"] .bs-section__head {
+	background: linear-gradient(to right, #fff5f5, #fff);
+}
+.bs-section[style*="border-color:#e24b4a"] .bs-section__title {
+	color: #a32d2d;
+}
+
+/* =========================================================================
+   RESPONSIVE (< 782px — sidebar WP repliée)
+   ========================================================================= */
+@media screen and (max-width: 782px) {
+	.bs-tabs { gap: 2px; }
+	.bs-tab  { padding: 7px 10px; font-size: 12px; }
+	.bs-settings-form { padding: 16px 14px; }
+	.bs-settings-form .form-table th { width: 100%; display: block; padding-top: 10px; }
+	.bs-settings-form .form-table td { display: block; padding-left: 0; }
+	.bs-color-pair { flex-direction: column; gap: 14px; }
+	.bs-io-wrap    { flex-direction: column; }
+}
