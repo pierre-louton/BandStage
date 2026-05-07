@@ -1,0 +1,786 @@
+/*
+ * BandStage — public.css
+ * Design iOS-first, préfixe bs-
+ * Author: Pierre Beaubié
+ */
+
+/* ============================================================
+   0. GOOGLE FONTS (déclarées en PHP via wp_enqueue_style)
+   ============================================================ */
+
+/* ============================================================
+   1. VARIABLES CSS (sur tous les wrappers BandStage)
+   ============================================================ */
+.bs-wrap,
+.bs-tc-wrap,
+.bs-pr-wrap,
+.bs-gr-wrap {
+  /* Typos */
+  --bs-font-display : 'Playfair Display', Georgia, serif;
+  --bs-font-body    : -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --bs-font-brand   : 'Playfair Display', Georgia, serif;
+  --bs-font-ui      : 'Oswald', sans-serif;
+  font-weight       : 600;
+
+  /* Couleurs de surface */
+  --bs-bg        : #F2F2F7;
+  --bs-surface   : #ffffff;
+  --bs-surface-3 : rgba(255, 255, 255, .72);
+
+  /* Séparateurs */
+  --bs-sep       : rgba(60, 60, 67, .29);
+  --bs-sep-light : rgba(60, 60, 67, .12);
+
+  /* Labels */
+  --bs-label   : #1c1c1e;
+  --bs-label-2 : #3c3c43;
+  --bs-label-3 : rgba(60, 60, 67, .6);
+  --bs-label-inv: #ffffff;
+
+  /* Accent (surchargé inline par may_inject_dynamic_css) */
+  --bs-accent      : #D4A820;
+  --bs-accent-rgb  : 212, 168, 32;
+  --bs-accent-light: rgba(212, 168, 32, .10);
+  --bs-gold        : #D4A820;
+  --bs-cream       : #FAF6EB;
+
+  /* Rayons */
+  --bs-r-xs   : 6px;
+  --bs-r-sm   : 8px;
+  --bs-r-md   : 12px;
+  --bs-r-lg   : 16px;
+  --bs-r-card : 16px;
+  --bs-r-pill : 999px;
+
+  /* Ombres */
+  --bs-shadow-sm : 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.12);
+  --bs-shadow-md : 0 4px 12px rgba(0,0,0,.12), 0 2px 4px rgba(0,0,0,.08);
+  --bs-shadow-lg : 0 10px 30px rgba(0,0,0,.18);
+
+  /* Animation */
+  --bs-ease     : cubic-bezier(.25, .46, .45, .94);
+  --bs-duration : .28s;
+
+  /* Layout */
+  --bs-gap   : 12px;
+  --bs-pad   : 20px;
+  --bs-max-w : 900px;
+}
+
+/* ============================================================
+   2. RESET & BASE
+   ============================================================ */
+.bs-wrap,
+.bs-tc-wrap,
+.bs-pr-wrap,
+.bs-gr-wrap {
+  min-height      : 100vh;
+  font-family     : var(--bs-font-body);
+  color           : var(--bs-label-inv);
+  -webkit-font-smoothing: antialiased;
+  box-sizing      : border-box;
+}
+
+.bs-wrap *,
+.bs-tc-wrap *,
+.bs-pr-wrap *,
+.bs-gr-wrap * {
+  box-sizing: inherit;
+}
+
+/* ============================================================
+   3. HEADER
+   ============================================================ */
+.bs-header {
+  text-align : center;
+  padding    : 48px var(--bs-pad) 32px;
+}
+
+.bs-header__brand {
+  font-family  : var(--bs-font-brand);
+  font-size    : clamp(2rem, 6vw, 3.5rem);
+  font-weight  : 700;
+  margin       : 0 0 8px;
+  color        : var(--bs-label-inv);
+  letter-spacing: -.5px;
+}
+
+.bs-header__tagline {
+  font-family  : var(--bs-font-ui);
+  font-size    : 1rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color        : var(--bs-accent);
+  margin       : 0 0 6px;
+}
+
+.bs-header__section,
+.bs-header__city {
+  font-size : .9rem;
+  color     : rgba(255,255,255,.7);
+  margin    : 4px 0 0;
+}
+
+/* ============================================================
+   4. TICKER
+   ============================================================ */
+.bs-ticker {
+  overflow       : hidden;
+  background     : rgba(0,0,0,.25);
+  border-top     : 1px solid var(--bs-sep-light);
+  border-bottom  : 1px solid var(--bs-sep-light);
+  padding        : 10px 0;
+  white-space    : nowrap;
+}
+
+.bs-ticker__track {
+  display   : inline-flex;
+  gap       : 64px;
+  animation : bs-ticker var(--bs-ticker-speed, 24s) linear infinite;
+}
+
+.bs-ticker__item {
+  font-family  : var(--bs-font-ui);
+  font-size    : .85rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color        : var(--bs-accent);
+}
+
+@keyframes bs-ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ============================================================
+   5. GRILLE 2×3
+   ============================================================ */
+.bs-grid {
+  display              : grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap                  : var(--bs-gap);
+  padding              : var(--bs-pad);
+  max-width            : var(--bs-max-w);
+  margin               : 0 auto;
+}
+
+@media (min-width: 640px) {
+  .bs-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.bs-box {
+  background    : var(--bs-surface-3);
+  border-radius : var(--bs-r-card);
+  padding       : 24px 16px;
+  display       : flex;
+  flex-direction: column;
+  align-items   : center;
+  gap           : 10px;
+  text-decoration: none;
+  color         : var(--bs-label-inv);
+  transition    : transform var(--bs-duration) var(--bs-ease),
+                  box-shadow var(--bs-duration) var(--bs-ease);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow    : var(--bs-shadow-sm);
+}
+
+.bs-box:hover {
+  transform : translateY(-3px);
+  box-shadow: var(--bs-shadow-md);
+}
+
+.bs-box__label {
+  font-family  : var(--bs-font-ui);
+  font-size    : .9rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.bs-box__icon {
+  font-size: 2rem;
+}
+
+/* ============================================================
+   6. TCHACHE  (préfixe bs-tc-)
+   ============================================================ */
+.bs-tc-wrap {
+  display       : flex;
+  flex-direction: column;
+  min-height    : 100vh;
+}
+
+.bs-tc-messages {
+  flex       : 1;
+  padding    : var(--bs-pad);
+  display    : flex;
+  flex-direction: column;
+  gap        : 12px;
+  max-width  : var(--bs-max-w);
+  margin     : 0 auto;
+  width      : 100%;
+}
+
+.bs-tc-msg {
+  display : flex;
+  gap     : 10px;
+  align-items: flex-start;
+}
+
+.bs-tc-msg--own {
+  flex-direction: row-reverse;
+}
+
+.bs-tc-msg__avatar img,
+.bs-tc-msg__initials {
+  width         : 40px;
+  height        : 40px;
+  border-radius : var(--bs-r-pill);
+  flex-shrink   : 0;
+}
+
+.bs-tc-msg__initials {
+  background   : var(--bs-accent);
+  color        : var(--bs-label-inv);
+  display      : flex;
+  align-items  : center;
+  justify-content: center;
+  font-family  : var(--bs-font-ui);
+  font-size    : .9rem;
+}
+
+.bs-tc-msg__body {
+  background    : var(--bs-surface-3);
+  border-radius : var(--bs-r-md);
+  padding       : 10px 14px;
+  max-width     : 75%;
+  backdrop-filter: blur(8px);
+}
+
+.bs-tc-msg--own .bs-tc-msg__body {
+  background: rgba(var(--bs-accent-rgb), .25);
+}
+
+.bs-tc-msg__author {
+  display    : block;
+  font-family: var(--bs-font-ui);
+  font-size  : .75rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color      : var(--bs-accent);
+  margin-bottom: 4px;
+}
+
+.bs-tc-msg__text {
+  margin    : 0;
+  font-size : .95rem;
+  line-height: 1.5;
+}
+
+.bs-tc-msg__time {
+  font-size  : .75rem;
+  color      : rgba(255,255,255,.5);
+  display    : block;
+  margin-top : 4px;
+}
+
+.bs-tc-form {
+  padding   : var(--bs-pad);
+  background: rgba(0,0,0,.25);
+  border-top: 1px solid var(--bs-sep-light);
+  position  : sticky;
+  bottom    : 0;
+  max-width : var(--bs-max-w);
+  margin    : 0 auto;
+  width     : 100%;
+}
+
+.bs-tc-form__textarea {
+  width         : 100%;
+  background    : var(--bs-surface-3);
+  border        : 1px solid var(--bs-sep-light);
+  border-radius : var(--bs-r-md);
+  padding       : 12px;
+  color         : var(--bs-label);
+  font-family   : var(--bs-font-body);
+  font-size     : 1rem;
+  resize        : none;
+}
+
+.bs-tc-form__footer {
+  display        : flex;
+  justify-content: space-between;
+  align-items    : center;
+  margin-top     : 8px;
+}
+
+.bs-tc-form__counter {
+  font-size : .8rem;
+  color     : rgba(255,255,255,.5);
+}
+
+/* Zone grisée visiteur non connecté */
+.bs-tc-locked {
+  text-align    : center;
+  padding       : 24px var(--bs-pad);
+  background    : rgba(0,0,0,.25);
+  border-top    : 1px solid var(--bs-sep-light);
+}
+
+.bs-tc-locked__msg {
+  color     : rgba(255,255,255,.7);
+  margin    : 0 0 12px;
+}
+
+/* ============================================================
+   7. PROFIL  (préfixe bs-pr-)
+   ============================================================ */
+.bs-pr-wrap {
+  display        : flex;
+  align-items    : center;
+  justify-content: center;
+  padding        : var(--bs-pad);
+}
+
+.bs-pr-login {
+  width         : 100%;
+  max-width     : 420px;
+  background    : var(--bs-surface-3);
+  border-radius : var(--bs-r-card);
+  padding       : 40px 32px;
+  backdrop-filter: blur(16px);
+  box-shadow    : var(--bs-shadow-lg);
+}
+
+.bs-pr-login__header {
+  text-align   : center;
+  margin-bottom: 28px;
+}
+
+.bs-pr-login__logo {
+  font-size: 3rem;
+  display  : block;
+  margin   : 0 0 12px;
+}
+
+.bs-pr-login__title {
+  font-family : var(--bs-font-brand);
+  font-size   : 1.8rem;
+  margin      : 0 0 6px;
+  color       : var(--bs-label-inv);
+}
+
+.bs-pr-login__subtitle {
+  color     : rgba(255,255,255,.7);
+  font-size : .9rem;
+  margin    : 0;
+}
+
+/* Surcharge du form WP */
+.bs-pr-login__form #loginform {
+  background    : transparent;
+  border        : none;
+  box-shadow    : none;
+  padding       : 0;
+}
+
+.bs-pr-login__form .login-username,
+.bs-pr-login__form .login-password,
+.bs-pr-login__form .login-remember {
+  margin-bottom : 14px;
+}
+
+.bs-pr-login__form label {
+  color     : rgba(255,255,255,.85);
+  font-size : .9rem;
+}
+
+.bs-pr-login__form input[type="text"],
+.bs-pr-login__form input[type="password"] {
+  width         : 100%;
+  background    : rgba(255,255,255,.12);
+  border        : 1px solid var(--bs-sep-light);
+  border-radius : var(--bs-r-sm);
+  color         : #fff;
+  padding       : 12px 14px;
+  font-size     : 1rem;
+  margin-top    : 4px;
+}
+
+.bs-pr-login__form input[type="text"]::placeholder,
+.bs-pr-login__form input[type="password"]::placeholder {
+  color: rgba(255,255,255,.4);
+}
+
+.bs-pr-login__form input[type="submit"],
+.bs-pr-login__form #wp-submit {
+  width         : 100%;
+  background    : var(--bs-accent);
+  color         : #1c1c1e;
+  border        : none;
+  border-radius : var(--bs-r-sm);
+  padding       : 14px;
+  font-family   : var(--bs-font-ui);
+  font-size     : 1rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor        : pointer;
+  margin-top    : 8px;
+  transition    : opacity var(--bs-duration);
+}
+
+.bs-pr-login__form input[type="submit"]:hover {
+  opacity: .88;
+}
+
+.bs-pr-login__register,
+.bs-pr-login__lost {
+  text-align  : center;
+  margin-top  : 14px;
+  font-size   : .85rem;
+}
+
+.bs-pr-login__register a,
+.bs-pr-login__lost a {
+  color: rgba(255,255,255,.65);
+  text-decoration: none;
+}
+
+.bs-pr-login__register a:hover,
+.bs-pr-login__lost a:hover {
+  color: var(--bs-accent);
+}
+
+/* Avatar profil connecté */
+.bs-pr-avatar {
+  text-align : center;
+  padding    : 32px var(--bs-pad) 16px;
+}
+
+.bs-pr-avatar__img {
+  width         : 96px;
+  height        : 96px;
+  border-radius : var(--bs-r-pill);
+  object-fit    : cover;
+  border        : 3px solid var(--bs-accent);
+}
+
+.bs-pr-avatar__initials {
+  width         : 96px;
+  height        : 96px;
+  border-radius : var(--bs-r-pill);
+  background    : var(--bs-accent);
+  color         : #1c1c1e;
+  display       : inline-flex;
+  align-items   : center;
+  justify-content: center;
+  font-family   : var(--bs-font-ui);
+  font-size     : 2rem;
+}
+
+.bs-pr-avatar__name {
+  font-family : var(--bs-font-brand);
+  font-size   : 1.5rem;
+  margin      : 12px 0 0;
+  color       : var(--bs-label-inv);
+}
+
+/* ============================================================
+   8. GROUPE / LINEUP  (préfixe bs-gr- public, bs-lineup- items)
+   ============================================================ */
+.bs-lineup-grid {
+  display              : grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap                  : var(--bs-gap);
+  padding              : var(--bs-pad);
+  max-width            : var(--bs-max-w);
+  margin               : 0 auto;
+}
+
+@media (min-width: 600px) {
+  .bs-lineup-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (min-width: 900px) {
+  .bs-lineup-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+.bs-lineup-card {
+  background    : var(--bs-surface-3);
+  border-radius : var(--bs-r-card);
+  overflow      : hidden;
+  box-shadow    : var(--bs-shadow-sm);
+  backdrop-filter: blur(8px);
+  transition    : transform var(--bs-duration) var(--bs-ease),
+                  box-shadow var(--bs-duration) var(--bs-ease);
+}
+
+.bs-lineup-card:hover {
+  transform : translateY(-4px);
+  box-shadow: var(--bs-shadow-md);
+}
+
+.bs-lineup-card__photo {
+  aspect-ratio  : 1;
+  overflow      : hidden;
+  background    : rgba(0,0,0,.2);
+}
+
+.bs-lineup-card__photo img {
+  width     : 100%;
+  height    : 100%;
+  object-fit: cover;
+  display   : block;
+}
+
+.bs-lineup-card__initials {
+  width          : 100%;
+  height         : 100%;
+  display        : flex;
+  align-items    : center;
+  justify-content: center;
+  font-family    : var(--bs-font-ui);
+  font-size      : 2.5rem;
+  color          : var(--bs-accent);
+  background     : rgba(var(--bs-accent-rgb), .1);
+}
+
+.bs-lineup-card__info {
+  padding: 14px;
+}
+
+.bs-lineup-card__name {
+  font-family   : var(--bs-font-brand);
+  font-size     : 1rem;
+  margin        : 0 0 4px;
+  color         : var(--bs-label-inv);
+}
+
+.bs-lineup-card__role {
+  font-family  : var(--bs-font-ui);
+  font-size    : .8rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color        : var(--bs-accent);
+  margin       : 0 0 4px;
+}
+
+.bs-lineup-card__styles {
+  font-size  : .8rem;
+  color      : rgba(255,255,255,.6);
+  margin     : 0;
+  display    : block;
+}
+
+/* ============================================================
+   9. HUMEURS / STUDIO PUBLIC (préfixe bs-humeur-)
+   ============================================================ */
+.bs-humeurs {
+  padding   : var(--bs-pad);
+  max-width : var(--bs-max-w);
+  margin    : 0 auto;
+  display   : flex;
+  flex-direction: column;
+  gap       : 16px;
+}
+
+.bs-humeur-card {
+  background    : var(--bs-surface-3);
+  border-radius : var(--bs-r-card);
+  padding       : 20px;
+  backdrop-filter: blur(8px);
+}
+
+.bs-humeur-card__meta {
+  display    : flex;
+  gap        : 12px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.bs-humeur-card__author {
+  font-family  : var(--bs-font-ui);
+  font-size    : .8rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color        : var(--bs-accent);
+}
+
+.bs-humeur-card__date {
+  font-size  : .8rem;
+  color      : rgba(255,255,255,.5);
+}
+
+.bs-humeur-card__title {
+  font-family  : var(--bs-font-brand);
+  font-size    : 1.25rem;
+  margin       : 0 0 10px;
+  color        : var(--bs-label-inv);
+}
+
+.bs-humeur-card__content {
+  font-size  : .95rem;
+  line-height: 1.6;
+  color      : rgba(255,255,255,.85);
+}
+
+.bs-humeur-card__content p {
+  margin: 0 0 10px;
+}
+
+/* ============================================================
+   10. PARTENAIRES PUBLIC  (préfixe bs-pp-)
+   ============================================================ */
+.bs-pp-section {
+  padding   : 0 var(--bs-pad) 32px;
+  max-width : var(--bs-max-w);
+  margin    : 0 auto;
+}
+
+.bs-pp-section__title {
+  font-family  : var(--bs-font-ui);
+  font-size    : 1rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color        : var(--bs-accent);
+  margin       : 0 0 16px;
+}
+
+.bs-pp-grid {
+  display              : grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap                  : var(--bs-gap);
+}
+
+.bs-pp-card {
+  background    : var(--bs-surface-3);
+  border-radius : var(--bs-r-card);
+  overflow      : hidden;
+  box-shadow    : var(--bs-shadow-sm);
+  backdrop-filter: blur(8px);
+}
+
+.bs-pp-card__thumb {
+  width     : 100%;
+  height    : 160px;
+  object-fit: cover;
+  display   : block;
+}
+
+.bs-pp-card__body {
+  padding: 16px;
+}
+
+.bs-pp-card__name {
+  font-family : var(--bs-font-brand);
+  font-size   : 1.1rem;
+  margin      : 0 0 8px;
+  color       : var(--bs-label-inv);
+}
+
+.bs-pp-card__desc {
+  font-size  : .88rem;
+  color      : rgba(255,255,255,.75);
+  margin     : 0 0 10px;
+  line-height: 1.4;
+}
+
+.bs-pp-card__contacts {
+  list-style: none;
+  margin    : 0;
+  padding   : 0;
+  font-size : .85rem;
+}
+
+.bs-pp-card__contacts li {
+  margin-bottom: 4px;
+  color: rgba(255,255,255,.7);
+}
+
+.bs-pp-card__contacts a {
+  color          : var(--bs-accent);
+  text-decoration: none;
+}
+
+/* ============================================================
+   11. BOUTONS PUBLICS
+   ============================================================ */
+.bss-btn {
+  display       : inline-flex;
+  align-items   : center;
+  justify-content: center;
+  gap           : 6px;
+  padding       : 10px 18px;
+  border-radius : var(--bs-r-sm);
+  font-family   : var(--bs-font-ui);
+  font-size     : .9rem;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  border        : 1.5px solid transparent;
+  cursor        : pointer;
+  text-decoration: none;
+  transition    : opacity var(--bs-duration), transform var(--bs-duration) var(--bs-ease);
+}
+
+.bss-btn:hover { opacity: .85; }
+.bss-btn:active { transform: scale(.97); }
+
+.bss-btn--primary {
+  background : var(--bs-accent);
+  color      : #1c1c1e;
+  border-color: var(--bs-accent);
+}
+
+.bss-btn--ghost {
+  background : transparent;
+  color      : var(--bs-label-inv);
+  border-color: var(--bs-sep);
+}
+
+.bss-btn--danger {
+  background : transparent;
+  color      : #ff3b30;
+  border-color: #ff3b30;
+}
+
+.bss-btn--sm {
+  padding   : 6px 12px;
+  font-size : .78rem;
+}
+
+/* ============================================================
+   12. TOAST
+   ============================================================ */
+.bss-toast {
+  position     : fixed;
+  bottom       : 24px;
+  left         : 50%;
+  transform    : translateX(-50%) translateY(80px);
+  background   : rgba(28,28,30,.95);
+  color        : #fff;
+  padding      : 12px 24px;
+  border-radius: var(--bs-r-pill);
+  font-size    : .9rem;
+  pointer-events: none;
+  opacity      : 0;
+  transition   : all .3s var(--bs-ease);
+  z-index      : 9999;
+  white-space  : nowrap;
+}
+
+.bss-toast--show {
+  opacity  : 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.bss-toast--success { border-left: 4px solid #30d158; }
+.bss-toast--error   { border-left: 4px solid #ff3b30; }
+
+/* ============================================================
+   13. ÉTATS VIDES
+   ============================================================ */
+.bs-empty {
+  text-align : center;
+  padding    : 60px var(--bs-pad);
+  color      : rgba(255,255,255,.5);
+}
