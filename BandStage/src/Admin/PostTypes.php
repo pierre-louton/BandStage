@@ -14,9 +14,7 @@ class PostTypes {
 
 	public static function register_all(): void {
 		self::register_news();
-		self::register_partenaire();
 		self::register_band_member();
-		self::register_type_partenaire();
 	}
 
 	// -------------------------------------------------------------------------
@@ -44,29 +42,6 @@ class PostTypes {
 	}
 
 	// -------------------------------------------------------------------------
-	// bs_partenaire — Partenaires locaux
-	// -------------------------------------------------------------------------
-
-	private static function register_partenaire(): void {
-		register_post_type( 'bs_partenaire', [
-			'labels' => [
-				'name'          => __( 'Partenaires', 'bandstage' ),
-				'singular_name' => __( 'Partenaire', 'bandstage' ),
-				'add_new_item'  => __( 'Ajouter un partenaire', 'bandstage' ),
-				'edit_item'     => __( 'Modifier le partenaire', 'bandstage' ),
-				'not_found'     => __( 'Aucun partenaire', 'bandstage' ),
-			],
-			'public'          => false,
-			'show_ui'         => true,
-			'show_in_menu'    => 'bandstage',
-			'supports'        => [ 'title', 'editor', 'thumbnail' ],
-			'capability_type' => 'post',
-			'map_meta_cap'    => true,
-			'rewrite'         => false,
-		] );
-	}
-
-	// -------------------------------------------------------------------------
 	// bs_band_member — Membres du lineup du groupe (PUBLIC)
 	// -------------------------------------------------------------------------
 
@@ -90,21 +65,4 @@ class PostTypes {
 		] );
 	}
 
-	// -------------------------------------------------------------------------
-	// bs_type_partenaire — Taxonomie partenaires (gérée en réglages, pas natif WP)
-	// -------------------------------------------------------------------------
-
-	private static function register_type_partenaire(): void {
-		register_taxonomy( 'bs_type_partenaire', 'bs_partenaire', [
-			'labels' => [
-				'name'          => __( 'Types de partenaires', 'bandstage' ),
-				'singular_name' => __( 'Type de partenaire', 'bandstage' ),
-			],
-			'hierarchical' => false,
-			'show_ui'      => false,
-			'show_in_menu' => false,
-			'rewrite'      => false,
-			'public'       => false,
-		] );
-	}
 }

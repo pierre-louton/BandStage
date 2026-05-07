@@ -14,6 +14,7 @@ use BandStage\Admin\Admin;
 use BandStage\Admin\Assets      as AdminAssets;
 use BandStage\Admin\PostTypes;
 use BandStage\Admin\SettingsPage;
+use BandStage\Domain\Concerts\ConcertService;
 use BandStage\Domain\Lineup\LineupService;
 use BandStage\Domain\Members\MemberService;
 use BandStage\Domain\News\NewsService;
@@ -92,6 +93,7 @@ class Plugin {
 			'profil'      => [ 'title' => 'BandStage — Mon Compte',  'shortcode' => '[bandstage_profil]',     'template' => 'elementor_canvas' ],
 			'studio'      => [ 'title' => 'BandStage — Studio',      'shortcode' => '[bandstage_studio]',     'template' => 'elementor_canvas' ],
 			'partenaires' => [ 'title' => 'BandStage — Partenaires', 'shortcode' => '[bandstage_partenaires]','template' => 'elementor_canvas' ],
+			'concerts'    => [ 'title' => 'BandStage — Concerts',   'shortcode' => '[bandstage_concerts]',   'template' => 'elementor_canvas' ],
 			'groupe'      => [ 'title' => 'BandStage — Le groupe',   'shortcode' => '[bandstage_groupe]',     'template' => 'elementor_canvas' ],
 		];
 
@@ -193,6 +195,7 @@ class Plugin {
 			new TchacheService(),
 			new NewsService(),
 			new PartenaireService(),
+			new ConcertService(),
 			new MemberService(),
 			new NotificationService(),
 			new LineupService(),

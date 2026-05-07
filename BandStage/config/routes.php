@@ -20,6 +20,10 @@ return [
 		'list' => $tpl . 'partenaire-list.php',
 		'edit' => $tpl . 'partenaire-edit.php',
 	],
+	'concerts' => [
+		'list' => $tpl . 'concert-list.php',
+		'edit' => $tpl . 'concert-edit.php',
+	],
 	'groupe' => [
 		'list' => $tpl . 'lineup-list.php',
 		'edit' => $tpl . 'lineup-edit.php',
