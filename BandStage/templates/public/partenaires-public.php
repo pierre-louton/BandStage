@@ -1,6 +1,6 @@
 <?php
 /**
- * [bandstage_partenaires] — vue publique groupée par type.
+ * [bandstage_partenaires] — vue publique.
  *
  * @var array $partenaires  groupés : [ slug => [ label, icon, items[] ] ]
  *
@@ -30,23 +30,26 @@ defined( 'ABSPATH' ) || exit;
         <div class="bs-pp-grid">
           <?php foreach ( $type['items'] as $p ) : ?>
             <div class="bs-pp-card">
-              <?php if ( $p->thumbnail ) : ?>
+              <?php if ( $p->logo_url ) : ?>
                 <img class="bs-pp-card__thumb"
-                     src="<?php echo esc_url( $p->thumbnail ); ?>"
+                     src="<?php echo esc_url( $p->logo_url ); ?>"
                      alt="<?php echo esc_attr( $p->name ); ?>"
                      loading="lazy">
               <?php endif; ?>
               <div class="bs-pp-card__body">
                 <h3 class="bs-pp-card__name"><?php echo esc_html( $p->name ); ?></h3>
                 <?php if ( $p->description ) : ?>
-                  <p class="bs-pp-card__desc"><?php echo esc_html( wp_strip_all_tags( $p->description ) ); ?></p>
+                  <p class="bs-pp-card__desc"><?php echo esc_html( $p->description ); ?></p>
                 <?php endif; ?>
                 <ul class="bs-pp-card__contacts">
-                  <?php if ( $p->address ) : ?>
-                    <li>📍 <?php echo esc_html( $p->address ); ?></li>
+                  <?php $addr = $p->address_full(); if ( $addr ) : ?>
+                    <li>📍 <?php echo esc_html( $addr ); ?></li>
                   <?php endif; ?>
                   <?php if ( $p->phone ) : ?>
                     <li><a href="tel:<?php echo esc_attr( $p->phone ); ?>"><?php echo esc_html( $p->phone ); ?></a></li>
+                  <?php endif; ?>
+                  <?php if ( $p->email ) : ?>
+                    <li><a href="mailto:<?php echo esc_attr( $p->email ); ?>"><?php echo esc_html( $p->email ); ?></a></li>
                   <?php endif; ?>
                   <?php if ( $p->website ) : ?>
                     <li><a href="<?php echo esc_url( $p->website ); ?>" target="_blank" rel="noopener">🌐 <?php esc_html_e( 'Site web', 'bandstage' ); ?></a></li>
