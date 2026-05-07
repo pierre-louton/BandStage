@@ -1,6 +1,6 @@
 <?php
 /**
- * Service Partenaires.
+ * Service Partenaires — CRUD via $wpdb (tables bandstage_partenaires + bandstage_partenaire_types).
  *
  * @package BandStage
  * @author  Pierre Beaubié
@@ -8,177 +8,267 @@
 
 namespace BandStage\Domain\Partenaires;
 
+use BandStage\Core\Config;
+use BandStage\Domain\Media\LogoUploader;
+
 defined( 'ABSPATH' ) || exit;
 
 class PartenaireService {
 
-	public function register_ajax(): void {
-		add_action( 'wp_ajax_bs_partenaire_save',   [ $this, 'ajax_save' ] );
-		add_action( 'wp_ajax_bs_partenaire_delete', [ $this, 'ajax_delete' ] );
-		add_action( 'wp_ajax_bs_type_partenaire_add', [ $this, 'ajax_add_type' ] );
-	}
+    public function register_ajax(): void {
+        add_action( 'wp_ajax_bs_partenaire_save',        [ $this, 'ajax_save' ] );
+        add_action( 'wp_ajax_bs_partenaire_delete',      [ $this, 'ajax_delete' ] );
+        add_action( 'wp_ajax_bs_partenaire_type_save',   [ $this, 'ajax_type_save' ] );
+        add_action( 'wp_ajax_bs_partenaire_type_delete', [ $this, 'ajax_type_delete' ] );
+    }
 
-	/** @return Partenaire[] */
-	public function get_all(): array {
-		$posts = get_posts( [
-			'post_type'      => 'bs_partenaire',
-			'post_status'    => 'publish',
-			'orderby'        => 'title',
-			'order'          => 'ASC',
-			'posts_per_page' => -1,
-			'no_found_rows'  => true,
-		] );
-		return array_map( [ Partenaire::class, 'from_wp_post' ], $posts );
-	}
+    // -------------------------------------------------------------------------
+    // Lecture
+    // -------------------------------------------------------------------------
 
-	/** @return array<string, array{type: object, items: Partenaire[]}> */
-	public function get_grouped_by_type(): array {
-		$partenaires = $this->get_all();
-		$grouped     = [];
+    /** @return Partenaire[] */
+    public function get_all(): array {
+        global $wpdb;
+        $tp = Config::table_partenaires();
+        $tt = Config::table_partenaire_types();
 
-		foreach ( $partenaires as $p ) {
-			if ( ! isset( $grouped[ $p->type_slug ] ) ) {
-				$grouped[ $p->type_slug ] = [
-					'label' => $p->type_label,
-					'icon'  => $p->type_icon,
-					'items' => [],
-				];
-			}
-			$grouped[ $p->type_slug ]['items'][] = $p;
-		}
+        $rows = $wpdb->get_results(
+            "SELECT p.*, t.name AS type_name, t.slug AS type_slug, t.icon AS type_icon
+             FROM {$tp} p
+             LEFT JOIN {$tt} t ON t.id = p.type_id
+             ORDER BY p.name ASC"
+        );
 
-		return $grouped;
-	}
+        return array_map( [ Partenaire::class, 'from_db_row' ], $rows ?: [] );
+    }
 
-	public function get( int $id ): ?Partenaire {
-		$post = get_post( $id );
-		return ( $post && 'bs_partenaire' === $post->post_type ) ? Partenaire::from_wp_post( $post ) : null;
-	}
+    public function get( int $id ): ?Partenaire {
+        global $wpdb;
+        $tp = Config::table_partenaires();
+        $tt = Config::table_partenaire_types();
 
-	public function ajax_save(): void {
-		check_ajax_referer( BANDSTAGE_NONCE, 'nonce' );
+        $row = $wpdb->get_row( $wpdb->prepare(
+            "SELECT p.*, t.name AS type_name, t.slug AS type_slug, t.icon AS type_icon
+             FROM {$tp} p
+             LEFT JOIN {$tt} t ON t.id = p.type_id
+             WHERE p.id = %d",
+            $id
+        ) );
 
-		if ( ! current_user_can( 'edit_posts' ) ) {
-			wp_send_json_error( [ 'message' => __( 'Accès refusé.', 'bandstage' ) ], 403 );
-		}
+        return $row ? Partenaire::from_db_row( $row ) : null;
+    }
 
-		$post_id      = absint( $_POST['post_id']      ?? 0 );
-		$name         = sanitize_text_field( wp_unslash( $_POST['name']         ?? '' ) );
-		$description  = wp_kses_post(         wp_unslash( $_POST['description']  ?? '' ) );
-		$type_slug    = sanitize_key(          $_POST['type_slug']    ?? '' );
-		$website      = esc_url_raw(    wp_unslash( $_POST['website']      ?? '' ) );
-		$phone        = sanitize_text_field( wp_unslash( $_POST['phone']        ?? '' ) );
-		$address      = sanitize_text_field( wp_unslash( $_POST['address']      ?? '' ) );
-		$email        = sanitize_email(       wp_unslash( $_POST['email']        ?? '' ) );
-		$thumbnail_id = absint( $_POST['thumbnail_id'] ?? 0 );
+    /**
+     * Retourne les partenaires groupés par type pour la vue publique.
+     * @return array<string, array{label:string, icon:string, items:Partenaire[]}>
+     */
+    public function get_grouped_by_type(): array {
+        $grouped = [];
+        foreach ( $this->get_all() as $p ) {
+            $key = $p->type_slug ?: '_none';
+            if ( ! isset( $grouped[ $key ] ) ) {
+                $grouped[ $key ] = [
+                    'label' => $p->type_name ?: __( 'Autres', 'bandstage' ),
+                    'icon'  => $p->type_icon,
+                    'items' => [],
+                ];
+            }
+            $grouped[ $key ]['items'][] = $p;
+        }
+        return $grouped;
+    }
 
-		if ( empty( $name ) ) {
-			wp_send_json_error( [ 'message' => __( 'Le nom est obligatoire.', 'bandstage' ) ] );
-		}
+    /** @return PartenaireType[] */
+    public function get_types(): array {
+        global $wpdb;
+        $rows = $wpdb->get_results(
+            "SELECT * FROM " . Config::table_partenaire_types() . " ORDER BY name ASC"
+        );
+        return array_map( [ PartenaireType::class, 'from_db_row' ], $rows ?: [] );
+    }
 
-		$data = [
-			'post_title'   => $name,
-			'post_content' => $description,
-			'post_type'    => 'bs_partenaire',
-			'post_status'  => 'publish',
-		];
+    // -------------------------------------------------------------------------
+    // AJAX — Sauvegarder un partenaire
+    // -------------------------------------------------------------------------
 
-		if ( $post_id ) {
-			$data['ID'] = $post_id;
-			$result     = wp_update_post( $data, true );
-		} else {
-			$result = wp_insert_post( $data, true );
-		}
+    public function ajax_save(): void {
+        check_ajax_referer( BANDSTAGE_NONCE, 'nonce' );
 
-		if ( is_wp_error( $result ) ) {
-			wp_send_json_error( [ 'message' => $result->get_error_message() ] );
-		}
+        if ( ! current_user_can( 'edit_posts' ) ) {
+            wp_send_json_error( [ 'message' => __( 'Accès refusé.', 'bandstage' ) ], 403 );
+        }
 
-		$post_id = (int) $result;
+        global $wpdb;
+        $table = Config::table_partenaires();
 
-		update_post_meta( $post_id, 'bs_website', $website );
-		update_post_meta( $post_id, 'bs_phone',   $phone );
-		update_post_meta( $post_id, 'bs_address', $address );
-		update_post_meta( $post_id, 'bs_email',   $email );
+        $id          = absint( $_POST['partenaire_id'] ?? 0 );
+        $name        = sanitize_text_field( wp_unslash( $_POST['name']        ?? '' ) );
+        $description = sanitize_textarea_field( wp_unslash( $_POST['description'] ?? '' ) );
+        $type_id     = absint( $_POST['type_id'] ?? 0 ) ?: null;
+        $website     = esc_url_raw( wp_unslash( $_POST['website']     ?? '' ) );
+        $email       = sanitize_email( wp_unslash( $_POST['email']       ?? '' ) );
+        $phone       = sanitize_text_field( wp_unslash( $_POST['phone']       ?? '' ) );
+        $numero      = sanitize_text_field( wp_unslash( $_POST['numero']      ?? '' ) );
+        $nom_voie    = sanitize_text_field( wp_unslash( $_POST['nom_voie']    ?? '' ) );
+        $code_postal = sanitize_text_field( wp_unslash( $_POST['code_postal'] ?? '' ) );
+        $ville       = sanitize_text_field( wp_unslash( $_POST['ville']       ?? '' ) );
 
-		if ( $type_slug ) {
-			wp_set_object_terms( $post_id, $type_slug, 'bs_type_partenaire' );
-		}
+        if ( empty( $name ) ) {
+            wp_send_json_error( [ 'message' => __( 'Le nom est obligatoire.', 'bandstage' ) ] );
+        }
 
-		if ( $thumbnail_id > 0 ) {
-			set_post_thumbnail( $post_id, $thumbnail_id );
-		} elseif ( isset( $_POST['thumbnail_id'] ) && '0' === $_POST['thumbnail_id'] ) {
-			delete_post_thumbnail( $post_id );
-		}
+        // Logo
+        $logo_path = '';
+        if ( $id ) {
+            $logo_path = (string) $wpdb->get_var(
+                $wpdb->prepare( "SELECT logo_path FROM {$table} WHERE id = %d", $id )
+            );
+        }
 
-		wp_send_json_success( [
-			'message'  => __( 'Partenaire enregistré.', 'bandstage' ),
-			'post_id'  => $post_id,
-			'redirect' => \BandStage\Frontend\Shortcodes::partenaires_url( 'list' ),
-		] );
-	}
+        if ( ! empty( $_FILES['logo']['name'] ) ) {
+            if ( $logo_path ) {
+                LogoUploader::delete( $logo_path );
+            }
+            $result = LogoUploader::upload( $_FILES['logo'] );
+            if ( is_wp_error( $result ) ) {
+                wp_send_json_error( [ 'message' => $result->get_error_message() ] );
+            }
+            $logo_path = $result;
+        } elseif ( 'remove' === ( $_POST['logo_action'] ?? '' ) ) {
+            LogoUploader::delete( $logo_path );
+            $logo_path = '';
+        }
 
-	public function ajax_delete(): void {
-		check_ajax_referer( BANDSTAGE_NONCE, 'nonce' );
+        $data = [
+            'name'        => $name,
+            'description' => $description,
+            'type_id'     => $type_id,
+            'website'     => $website,
+            'email'       => $email,
+            'phone'       => $phone,
+            'numero'      => $numero,
+            'nom_voie'    => $nom_voie,
+            'code_postal' => $code_postal,
+            'ville'       => $ville,
+            'logo_path'   => $logo_path,
+        ];
 
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( [ 'message' => __( 'Accès refusé.', 'bandstage' ) ], 403 );
-		}
+        if ( $id ) {
+            $data['updated_at'] = current_time( 'mysql' );
+            $wpdb->update( $table, $data, [ 'id' => $id ] );
+        } else {
+            $wpdb->insert( $table, $data );
+        }
 
-		$post_id = absint( $_POST['post_id'] ?? 0 );
-		$post    = $post_id ? get_post( $post_id ) : null;
+        wp_send_json_success( [
+            'message'  => __( 'Partenaire enregistré.', 'bandstage' ),
+            'redirect' => \BandStage\Frontend\Shortcodes::partenaires_url( 'list' ),
+        ] );
+    }
 
-		if ( ! $post || 'bs_partenaire' !== $post->post_type ) {
-			wp_send_json_error( [ 'message' => __( 'Partenaire introuvable.', 'bandstage' ) ] );
-		}
+    // -------------------------------------------------------------------------
+    // AJAX — Supprimer un partenaire
+    // -------------------------------------------------------------------------
 
-		$thumb_id = (int) get_post_thumbnail_id( $post_id );
-		wp_delete_post( $post_id, true );
+    public function ajax_delete(): void {
+        check_ajax_referer( BANDSTAGE_NONCE, 'nonce' );
 
-		if ( $thumb_id ) {
-			$attached = get_posts( [
-				'post_type'  => 'any', 'meta_key' => '_thumbnail_id',
-				'meta_value' => $thumb_id, 'posts_per_page' => 1, 'fields' => 'ids',
-			] );
-			if ( empty( $attached ) ) {
-				wp_delete_attachment( $thumb_id, true );
-			}
-		}
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( [ 'message' => __( 'Accès refusé.', 'bandstage' ) ], 403 );
+        }
 
-		wp_send_json_success( [ 'message' => __( 'Partenaire supprimé.', 'bandstage' ) ] );
-	}
+        global $wpdb;
+        $table = Config::table_partenaires();
+        $id    = absint( $_POST['partenaire_id'] ?? 0 );
 
-	public function ajax_add_type(): void {
-		check_ajax_referer( BANDSTAGE_NONCE, 'nonce' );
+        if ( ! $id ) {
+            wp_send_json_error( [ 'message' => __( 'Identifiant manquant.', 'bandstage' ) ] );
+        }
 
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( [ 'message' => __( 'Accès refusé.', 'bandstage' ) ], 403 );
-		}
+        $logo_path = (string) $wpdb->get_var(
+            $wpdb->prepare( "SELECT logo_path FROM {$table} WHERE id = %d", $id )
+        );
+        LogoUploader::delete( $logo_path );
 
-		$name = sanitize_text_field( wp_unslash( $_POST['type_name'] ?? '' ) );
-		$icon = sanitize_text_field( wp_unslash( $_POST['type_icon'] ?? '' ) );
-		$slug = sanitize_title( $name );
+        // Supprimer les lignes pivot
+        $wpdb->delete( Config::table_concert_partenaires(), [ 'partenaire_id' => $id ] );
+        $wpdb->delete( $table, [ 'id' => $id ] );
 
-		if ( empty( $name ) ) {
-			wp_send_json_error( [ 'message' => __( 'Nom du type obligatoire.', 'bandstage' ) ] );
-		}
+        wp_send_json_success( [ 'message' => __( 'Partenaire supprimé.', 'bandstage' ) ] );
+    }
 
-		if ( term_exists( $slug, 'bs_type_partenaire' ) ) {
-			wp_send_json_error( [ 'message' => __( 'Ce type existe déjà.', 'bandstage' ) ] );
-		}
+    // -------------------------------------------------------------------------
+    // AJAX — Sauvegarder un type (manage_options)
+    // -------------------------------------------------------------------------
 
-		$result = wp_insert_term( $name, 'bs_type_partenaire', [ 'slug' => $slug ] );
-		if ( is_wp_error( $result ) ) {
-			wp_send_json_error( [ 'message' => $result->get_error_message() ] );
-		}
+    public function ajax_type_save(): void {
+        check_ajax_referer( BANDSTAGE_NONCE, 'nonce' );
 
-		update_term_meta( $result['term_id'], 'bs_term_icon', $icon );
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( [ 'message' => __( 'Accès refusé.', 'bandstage' ) ], 403 );
+        }
 
-		wp_send_json_success( [
-			'message' => __( 'Type ajouté.', 'bandstage' ),
-			'slug'    => $slug,
-			'name'    => $name,
-			'icon'    => $icon,
-		] );
-	}
+        global $wpdb;
+        $table = Config::table_partenaire_types();
+
+        $id   = absint( $_POST['type_id'] ?? 0 );
+        $name = sanitize_text_field( wp_unslash( $_POST['type_name'] ?? '' ) );
+        $icon = sanitize_text_field( wp_unslash( $_POST['type_icon'] ?? '' ) );
+        $slug = sanitize_title( $name );
+
+        if ( empty( $name ) ) {
+            wp_send_json_error( [ 'message' => __( 'Nom du type obligatoire.', 'bandstage' ) ] );
+        }
+
+        $data = [ 'name' => $name, 'slug' => $slug, 'icon' => $icon ];
+
+        if ( $id ) {
+            $wpdb->update( $table, $data, [ 'id' => $id ] );
+        } else {
+            // Vérifier doublon de slug
+            $exists = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$table} WHERE slug = %s", $slug ) );
+            if ( $exists ) {
+                wp_send_json_error( [ 'message' => __( 'Ce type existe déjà.', 'bandstage' ) ] );
+            }
+            $wpdb->insert( $table, $data );
+            $id = $wpdb->insert_id;
+        }
+
+        wp_send_json_success( [
+            'message' => __( 'Type enregistré.', 'bandstage' ),
+            'type_id' => $id,
+            'slug'    => $slug,
+            'name'    => $name,
+            'icon'    => $icon,
+        ] );
+    }
+
+    // -------------------------------------------------------------------------
+    // AJAX — Supprimer un type (manage_options)
+    // -------------------------------------------------------------------------
+
+    public function ajax_type_delete(): void {
+        check_ajax_referer( BANDSTAGE_NONCE, 'nonce' );
+
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( [ 'message' => __( 'Accès refusé.', 'bandstage' ) ], 403 );
+        }
+
+        global $wpdb;
+        $id = absint( $_POST['type_id'] ?? 0 );
+
+        if ( ! $id ) {
+            wp_send_json_error( [ 'message' => __( 'Identifiant manquant.', 'bandstage' ) ] );
+        }
+
+        // Les partenaires liés auront type_id mis à NULL (SET NULL en DB)
+        $wpdb->update(
+            Config::table_partenaires(),
+            [ 'type_id' => null ],
+            [ 'type_id' => $id ]
+        );
+        $wpdb->delete( Config::table_partenaire_types(), [ 'id' => $id ] );
+
+        wp_send_json_success( [ 'message' => __( 'Type supprimé.', 'bandstage' ) ] );
+    }
 }
