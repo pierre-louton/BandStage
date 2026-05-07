@@ -73,11 +73,15 @@ $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}bandstage_partenaire_types" )
 // -------------------------------------------------------------------------
 // 5. Logos uploadés
 // -------------------------------------------------------------------------
-$upload_dir = wp_upload_dir();
-$logos_dir  = trailingslashit( $upload_dir['basedir'] ) . 'bandstage/logos';
+$upload_dir    = wp_upload_dir();
+$bandstage_dir = trailingslashit( $upload_dir['basedir'] ) . 'bandstage';
+$logos_dir     = $bandstage_dir . '/logos';
 if ( is_dir( $logos_dir ) ) {
     array_map( 'unlink', glob( $logos_dir . '/*' ) ?: [] );
     rmdir( $logos_dir );
+}
+if ( is_dir( $bandstage_dir ) ) {
+    @rmdir( $bandstage_dir );
 }
 
 // -------------------------------------------------------------------------

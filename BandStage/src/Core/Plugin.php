@@ -125,6 +125,9 @@ class Plugin {
 	// -------------------------------------------------------------------------
 
 	private static function create_default_partner_types(): void {
+		global $wpdb;
+
+		$table    = Config::table_partenaire_types();
 		$defaults = [
 			[ 'slug' => 'magasins-musique', 'name' => 'Magasins de musique', 'icon' => '🎸' ],
 			[ 'slug' => 'luthiers',         'name' => 'Luthiers',            'icon' => '🪕' ],
@@ -133,11 +136,14 @@ class Plugin {
 		];
 
 		foreach ( $defaults as $type ) {
-			if ( ! term_exists( $type['slug'], 'bs_type_partenaire' ) ) {
-				$result = wp_insert_term( $type['name'], 'bs_type_partenaire', [ 'slug' => $type['slug'] ] );
-				if ( ! is_wp_error( $result ) ) {
-					update_term_meta( $result['term_id'], 'bs_term_icon', $type['icon'] );
-				}
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$exists = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE slug = %s LIMIT 1", $type['slug'] ) );
+			if ( ! $exists ) {
+				$wpdb->insert(
+					$table,
+					[ 'name' => $type['name'], 'slug' => $type['slug'], 'icon' => $type['icon'] ],
+					[ '%s', '%s', '%s' ]
+				);
 			}
 		}
 	}

@@ -94,11 +94,17 @@ class ConcertService {
         if ( empty( $date_debut ) ) {
             wp_send_json_error( [ 'message' => __( 'La date de début est obligatoire.', 'bandstage' ) ] );
         }
-        if ( ! \DateTime::createFromFormat( 'Y-m-d', $date_debut ) ) {
+        $dt_debut  = \DateTime::createFromFormat( 'Y-m-d', $date_debut );
+        $dt_errors = \DateTime::getLastErrors();
+        if ( ! $dt_debut || ( $dt_errors && ( $dt_errors['warning_count'] > 0 || $dt_errors['error_count'] > 0 ) ) ) {
             wp_send_json_error( [ 'message' => __( 'Format de date de début invalide.', 'bandstage' ) ] );
         }
-        if ( ! empty( $date_fin ) && ! \DateTime::createFromFormat( 'Y-m-d', $date_fin ) ) {
-            wp_send_json_error( [ 'message' => __( 'Format de date de fin invalide.', 'bandstage' ) ] );
+        if ( ! empty( $date_fin ) ) {
+            $dt_fin    = \DateTime::createFromFormat( 'Y-m-d', $date_fin );
+            $dt_errors = \DateTime::getLastErrors();
+            if ( ! $dt_fin || ( $dt_errors && ( $dt_errors['warning_count'] > 0 || $dt_errors['error_count'] > 0 ) ) ) {
+                wp_send_json_error( [ 'message' => __( 'Format de date de fin invalide.', 'bandstage' ) ] );
+            }
         }
 
         $data = [
