@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 class LogoUploader {
 
     private const MAX_SIZE  = 2 * 1024 * 1024; // 2 Mo
-    private const ALLOWED   = [ 'jpg', 'jpeg', 'png', 'webp', 'svg' ];
+    private const ALLOWED   = [ 'jpg', 'jpeg', 'png', 'webp' ];
     private const SUBDIR    = 'bandstage/logos';
 
     /**
@@ -65,9 +65,14 @@ class LogoUploader {
         if ( empty( $relative_path ) ) {
             return;
         }
-        $upload_dir = wp_upload_dir();
-        $full_path  = trailingslashit( $upload_dir['basedir'] ) . ltrim( $relative_path, '/' );
-        if ( file_exists( $full_path ) ) {
+        $upload_dir   = wp_upload_dir();
+        $allowed_base = realpath( trailingslashit( $upload_dir['basedir'] ) . self::SUBDIR );
+        $full_path    = realpath( trailingslashit( $upload_dir['basedir'] ) . ltrim( $relative_path, '/' ) );
+
+        if ( $full_path === false || $allowed_base === false ) {
+            return;
+        }
+        if ( str_starts_with( $full_path, $allowed_base . DIRECTORY_SEPARATOR ) && file_exists( $full_path ) ) {
             wp_delete_file( $full_path );
         }
     }
