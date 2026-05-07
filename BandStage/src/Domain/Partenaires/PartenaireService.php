@@ -125,13 +125,13 @@ class PartenaireService {
             );
         }
 
-        if ( ! empty( $_FILES['logo']['name'] ) ) {
+        if ( ! empty( $_FILES['logo']['name'] ) && UPLOAD_ERR_OK === ( $_FILES['logo']['error'] ?? -1 ) ) {
+            $result = LogoUploader::upload( $_FILES['logo'] );
+            if ( is_wp_error( $result ) || empty( $result ) ) {
+                wp_send_json_error( [ 'message' => is_wp_error( $result ) ? $result->get_error_message() : __( 'Échec de l\'upload.', 'bandstage' ) ] );
+            }
             if ( $logo_path ) {
                 LogoUploader::delete( $logo_path );
-            }
-            $result = LogoUploader::upload( $_FILES['logo'] );
-            if ( is_wp_error( $result ) ) {
-                wp_send_json_error( [ 'message' => $result->get_error_message() ] );
             }
             $logo_path = $result;
         } elseif ( 'remove' === ( $_POST['logo_action'] ?? '' ) ) {
