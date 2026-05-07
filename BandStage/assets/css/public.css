@@ -799,3 +799,64 @@
   padding    : 60px var(--bs-pad);
   color      : rgba(255,255,255,.5);
 }
+
+/* ============================================================
+   14. CONCERTS PUBLIC  (préfixe bs-concert-)
+   ============================================================ */
+.bs-concert-list {
+  list-style : none;
+  margin     : 0;
+  padding    : var(--bs-pad);
+  max-width  : var(--bs-max-w);
+  margin-left: auto;
+  margin-right: auto;
+  display    : flex;
+  flex-direction: column;
+  gap        : 16px;
+}
+
+.bs-concert-card {
+  display        : flex;
+  gap            : 16px;
+  background     : var(--bs-surface-3);
+  border-radius  : var(--bs-r-card);
+  padding        : 20px;
+  backdrop-filter: blur(8px);
+  align-items    : flex-start;
+}
+
+.bs-concert-card__date {
+  font-family  : var(--bs-font-ui);
+  font-size    : .85rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color        : var(--bs-accent);
+  white-space  : nowrap;
+  min-width    : 100px;
+  padding-top  : 2px;
+}
+
+.bs-concert-card__body {
+  flex: 1;
+}
+
+.bs-concert-card__titre {
+  font-family : var(--bs-font-brand);
+  font-size   : 1.2rem;
+  margin      : 0 0 8px;
+  color       : var(--bs-label-inv);
+}
+
+.bs-concert-card__lieu,
+.bs-concert-card__horaires {
+  font-size  : .88rem;
+  color      : rgba(255,255,255,.75);
+  margin     : 4px 0 0;
+}
+
+.bs-concert-card__address {
+  display    : block;
+  font-size  : .8rem;
+  color      : rgba(255,255,255,.5);
+  margin-top : 2px;
+}
