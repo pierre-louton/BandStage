@@ -55,6 +55,14 @@ $can_delete = current_user_can( 'manage_options' );
             <?php if ( $member->styles ) : ?>
               <em class="bss-lineup-item__styles"><?php echo esc_html( $member->styles ); ?></em>
             <?php endif; ?>
+            <?php if ( $member->social_link ) : ?>
+              <a href="<?php echo esc_url( $member->social_link ); ?>"
+                 class="bss-lineup-item__social"
+                 target="_blank"
+                 rel="noopener noreferrer">
+                <?php echo esc_html( $member->social_link ); ?>
+              </a>
+            <?php endif; ?>
           </div>
 
           <div class="bss-lineup-item__actions">

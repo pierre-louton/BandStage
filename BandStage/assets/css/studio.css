@@ -334,6 +334,21 @@
   display  : block;
 }
 
+.bss-lineup-item__social {
+  display        : block;
+  font-size      : .75rem;
+  color          : var(--bs-accent);
+  text-decoration: none;
+  white-space    : nowrap;
+  overflow       : hidden;
+  text-overflow  : ellipsis;
+  max-width      : 200px;
+}
+
+.bss-lineup-item__social:hover {
+  text-decoration: underline;
+}
+
 .bss-lineup-item__actions {
   display   : flex;
   gap       : 8px;
