@@ -75,7 +75,7 @@ document.querySelectorAll('.js-partenaire-delete').forEach(btn => {
   btn.addEventListener('click', async () => {
     if (!confirm(BsPublic.i18n.confirm)) return;
     btn.disabled = true;
-    const json   = await bsAjax('bs_partenaire_delete', { post_id: btn.dataset.id });
+    const json = await bsAjax('bs_partenaire_delete', { partenaire_id: btn.dataset.id });
 
     if (json.success) {
       BsToast.show(json.data.message, 'success');
@@ -89,19 +89,46 @@ document.querySelectorAll('.js-partenaire-delete').forEach(btn => {
 });
 
 // ============================================================
-// 4. SAVE PARTENAIRE (form bss-partenaire-form)
+// 4. SAVE PARTENAIRE
 // ============================================================
 (function () {
   const form = document.getElementById('bss-partenaire-form');
   if (!form) return;
 
+  // Prévisualisation du logo sélectionné
+  const fileInput = document.getElementById('bs-logo-file');
+  const preview   = document.getElementById('bs-logo-preview');
+  if (fileInput && preview) {
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => { preview.innerHTML = `<img src="${e.target.result}" alt="">`; };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Retrait du logo
+  const removeBtn = form.querySelector('.js-logo-remove');
+  if (removeBtn) {
+    removeBtn.addEventListener('click', () => {
+      if (preview) preview.innerHTML = '<span class="bss-logo-preview__placeholder">🖼️</span>';
+      const actionInput = document.getElementById('bs-logo-action');
+      if (actionInput) actionInput.value = 'remove';
+      removeBtn.style.display = 'none';
+    });
+  }
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(form));
-    const btn  = document.querySelector('[form="bss-partenaire-form"]');
+    const formData = new FormData(form);
+    formData.set('action', 'bs_partenaire_save');
+    formData.set('nonce', BsPublic.nonce);
+    const btn = document.querySelector('[form="bss-partenaire-form"]');
     if (btn) btn.disabled = true;
 
-    const json = await bsAjax('bs_partenaire_save', data);
+    const res  = await fetch(BsPublic.ajaxUrl, { method: 'POST', body: formData, credentials: 'same-origin' });
+    const json = await res.json();
     if (btn) btn.disabled = false;
 
     if (json.success) {
@@ -245,5 +272,53 @@ document.querySelectorAll('.js-lineup-delete').forEach(btn => {
       if (preview) preview.innerHTML = '<span class="bss-media-preview__placeholder">📷</span>';
       btn.style.display = 'none';
     });
+  });
+})();
+
+// ============================================================
+// 9. CONCERT — delete
+// ============================================================
+document.querySelectorAll('.js-concert-delete').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    if (!confirm(BsPublic.i18n.confirm)) return;
+    btn.disabled = true;
+    const json = await bsAjax('bs_concert_delete', { concert_id: btn.dataset.id });
+
+    if (json.success) {
+      BsToast.show(json.data.message, 'success');
+      const row = btn.closest('.bss-concert-item');
+      if (row) { row.style.opacity = '0'; setTimeout(() => row.remove(), 300); }
+    } else {
+      BsToast.show(json.data?.message || BsPublic.i18n.error, 'error');
+      btn.disabled = false;
+    }
+  });
+});
+
+// ============================================================
+// 10. CONCERT — save (FormData natif pour le multi-select)
+// ============================================================
+(function () {
+  const form = document.getElementById('bss-concert-form');
+  if (!form) return;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    formData.set('action', 'bs_concert_save');
+    formData.set('nonce', BsPublic.nonce);
+    const btn = document.querySelector('[form="bss-concert-form"]');
+    if (btn) btn.disabled = true;
+
+    const res  = await fetch(BsPublic.ajaxUrl, { method: 'POST', body: formData, credentials: 'same-origin' });
+    const json = await res.json();
+    if (btn) btn.disabled = false;
+
+    if (json.success) {
+      BsToast.show(json.data.message, 'success');
+      setTimeout(() => { window.location.href = json.data.redirect; }, 900);
+    } else {
+      BsToast.show(json.data?.message || BsPublic.i18n.error, 'error');
+    }
   });
 })();
