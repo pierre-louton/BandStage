@@ -142,7 +142,7 @@ class ConcertService {
     public function ajax_delete(): void {
         check_ajax_referer( BANDSTAGE_NONCE, 'nonce' );
 
-        if ( ! current_user_can( 'manage_options' ) ) {
+        if ( ! current_user_can( 'edit_posts' ) ) {
             wp_send_json_error( [ 'message' => __( 'Accès refusé.', 'bandstage' ) ], 403 );
         }
 
