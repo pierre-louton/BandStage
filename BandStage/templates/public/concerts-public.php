@@ -39,6 +39,9 @@ defined( 'ABSPATH' ) || exit;
             <?php if ( $c->horaires ) : ?>
               <p class="bs-concert-card__horaires">🕐 <?php echo esc_html( $c->horaires ); ?></p>
             <?php endif; ?>
+            <?php if ( $c->partenaire_names ) : ?>
+              <p class="bs-concert-card__partenaires">🤝 <?php echo esc_html( $c->partenaire_names ); ?></p>
+            <?php endif; ?>
           </div>
         </li>
       <?php endforeach; ?>

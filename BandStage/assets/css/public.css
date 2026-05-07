@@ -860,3 +860,29 @@
   color      : rgba(255,255,255,.5);
   margin-top : 2px;
 }
+
+.bs-concert-card__partenaires {
+  font-size  : .82rem;
+  color      : rgba(255,255,255,.6);
+  margin     : 6px 0 0;
+}
+
+/* Concerts à venir dans les cards partenaires */
+.bs-pp-card__concerts {
+  list-style : none;
+  margin     : 10px 0 0;
+  padding    : 0;
+  border-top : 1px solid rgba(255,255,255,.1);
+  padding-top: 8px;
+  font-size  : .82rem;
+  color      : rgba(255,255,255,.65);
+  display    : flex;
+  flex-direction: column;
+  gap        : 4px;
+}
+
+.bs-pp-card__concert-date {
+  color      : var(--bs-accent);
+  font-weight: 600;
+  margin-right: 4px;
+}

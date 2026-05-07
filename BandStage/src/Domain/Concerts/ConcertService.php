@@ -23,13 +23,21 @@ class ConcertService {
     // Lecture
     // -------------------------------------------------------------------------
 
-    /** @return Concert[]  Concerts à venir (date_debut >= aujourd'hui), triés ASC. */
+    /** @return Concert[]  Concerts à venir (date_debut >= aujourd'hui), triés ASC, avec noms des partenaires. */
     public function get_upcoming(): array {
         global $wpdb;
-        $table = Config::table_concerts();
-        $rows  = $wpdb->get_results(
+        $tc   = Config::table_concerts();
+        $tpiv = Config::table_concert_partenaires();
+        $tpar = Config::table_partenaires();
+        $rows = $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT * FROM {$table} WHERE date_debut >= %s ORDER BY date_debut ASC",
+                "SELECT c.*, COALESCE(GROUP_CONCAT(p.name ORDER BY p.name SEPARATOR ', '), '') AS partenaire_names
+                 FROM {$tc} c
+                 LEFT JOIN {$tpiv} cp ON cp.concert_id = c.id
+                 LEFT JOIN {$tpar} p ON p.id = cp.partenaire_id
+                 WHERE c.date_debut >= %s
+                 GROUP BY c.id
+                 ORDER BY c.date_debut ASC",
                 current_time( 'Y-m-d' )
             )
         );

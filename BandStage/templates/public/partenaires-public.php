@@ -2,7 +2,8 @@
 /**
  * [bandstage_partenaires] — vue publique.
  *
- * @var array $partenaires  groupés : [ slug => [ label, icon, items[] ] ]
+ * @var array $partenaires            groupés : [ slug => [ label, icon, items[] ] ]
+ * @var array $concerts_by_partenaire  concerts à venir par partenaire_id
  *
  * @package BandStage
  * @author  Pierre Beaubié
@@ -55,6 +56,18 @@ defined( 'ABSPATH' ) || exit;
                     <li><a href="<?php echo esc_url( $p->website ); ?>" target="_blank" rel="noopener">🌐 <?php esc_html_e( 'Site web', 'bandstage' ); ?></a></li>
                   <?php endif; ?>
                 </ul>
+                <?php if ( ! empty( $concerts_by_partenaire[ $p->id ] ) ) : ?>
+                  <ul class="bs-pp-card__concerts">
+                    <?php foreach ( $concerts_by_partenaire[ $p->id ] as $co ) : ?>
+                      <li>
+                        <span class="bs-pp-card__concert-date">
+                          <?php echo esc_html( date_i18n( 'j F Y', strtotime( $co->date_debut ) ) ); ?>
+                        </span>
+                        <?php echo esc_html( $co->titre ); ?>
+                      </li>
+                    <?php endforeach; ?>
+                  </ul>
+                <?php endif; ?>
               </div>
             </div>
           <?php endforeach; ?>

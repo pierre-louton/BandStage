@@ -78,6 +78,31 @@ class PartenaireService {
         return $grouped;
     }
 
+    /**
+     * Concerts à venir groupés par partenaire_id.
+     * @return array<int, array<object{titre:string, date_debut:string, date_fin:string|null}>>
+     */
+    public function get_upcoming_concerts_by_partenaire(): array {
+        global $wpdb;
+        $tc   = Config::table_concerts();
+        $tpiv = Config::table_concert_partenaires();
+        $rows = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT cp.partenaire_id, c.titre, c.date_debut, c.date_fin
+                 FROM {$tpiv} cp
+                 INNER JOIN {$tc} c ON c.id = cp.concert_id
+                 WHERE c.date_debut >= %s
+                 ORDER BY c.date_debut ASC",
+                current_time( 'Y-m-d' )
+            )
+        );
+        $result = [];
+        foreach ( $rows ?: [] as $row ) {
+            $result[ (int) $row->partenaire_id ][] = $row;
+        }
+        return $result;
+    }
+
     /** @return PartenaireType[] */
     public function get_types(): array {
         global $wpdb;

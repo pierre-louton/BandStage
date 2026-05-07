@@ -118,7 +118,8 @@ class Shortcodes {
 		Assets::maybe_inject_dynamic_css();
 
 		if ( ! current_user_can( 'edit_posts' ) ) {
-			$partenaires = $service->get_grouped_by_type();
+			$partenaires            = $service->get_grouped_by_type();
+			$concerts_by_partenaire = $service->get_upcoming_concerts_by_partenaire();
 			include BANDSTAGE_PLUGIN_DIR . 'templates/public/partenaires-public.php';
 			return ob_get_clean();
 		}

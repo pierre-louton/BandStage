@@ -25,21 +25,24 @@ class Concert {
         public readonly string $ville,
         /** @var int[] IDs des partenaires associés */
         public readonly array  $partenaire_ids,
+        /** Noms des partenaires séparés par des virgules (chargé par get_upcoming/get_all). */
+        public readonly string $partenaire_names = '',
     ) {}
 
     public static function from_db_row( object $row, array $partenaire_ids = [] ): self {
         return new self(
-            id:             (int)    $row->id,
-            titre:          (string) $row->titre,
-            date_debut:     (string) $row->date_debut,
-            date_fin:       (string) ( $row->date_fin ?? '' ),
-            horaires:       (string) ( $row->horaires ?? '' ),
-            nom_lieu:       (string) ( $row->nom_lieu ?? '' ),
-            numero:         (string) ( $row->numero ?? '' ),
-            nom_voie:       (string) ( $row->nom_voie ?? '' ),
-            code_postal:    (string) ( $row->code_postal ?? '' ),
-            ville:          (string) ( $row->ville ?? '' ),
-            partenaire_ids: $partenaire_ids,
+            id:               (int)    $row->id,
+            titre:            (string) $row->titre,
+            date_debut:       (string) $row->date_debut,
+            date_fin:         (string) ( $row->date_fin ?? '' ),
+            horaires:         (string) ( $row->horaires ?? '' ),
+            nom_lieu:         (string) ( $row->nom_lieu ?? '' ),
+            numero:           (string) ( $row->numero ?? '' ),
+            nom_voie:         (string) ( $row->nom_voie ?? '' ),
+            code_postal:      (string) ( $row->code_postal ?? '' ),
+            ville:            (string) ( $row->ville ?? '' ),
+            partenaire_ids:   $partenaire_ids,
+            partenaire_names: (string) ( $row->partenaire_names ?? '' ),
         );
     }
 
