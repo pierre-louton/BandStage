@@ -110,7 +110,7 @@ class LineupService {
 		wp_send_json_success( [
 			'message'  => __( 'Membre enregistré.', 'bandstage' ),
 			'post_id'  => $post_id,
-			'redirect' => \BandStage\Public\Shortcodes::groupe_url( 'list' ),
+			'redirect' => \BandStage\Frontend\Shortcodes::groupe_url( 'list' ),
 			'member'   => $member ? [
 				'id'            => $member->id,
 				'name'          => $member->name,

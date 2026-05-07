@@ -8,7 +8,7 @@
  * @author  Pierre Beaubié
  */
 
-namespace BandStage\Public;
+namespace BandStage\Frontend;
 
 defined( 'ABSPATH' ) || exit;
 

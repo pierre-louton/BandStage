@@ -114,7 +114,7 @@ class PartenaireService {
 		wp_send_json_success( [
 			'message'  => __( 'Partenaire enregistré.', 'bandstage' ),
 			'post_id'  => $post_id,
-			'redirect' => \BandStage\Public\Shortcodes::partenaires_url( 'list' ),
+			'redirect' => \BandStage\Frontend\Shortcodes::partenaires_url( 'list' ),
 		] );
 	}
 

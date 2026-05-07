@@ -10,7 +10,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-use BandStage\Public\Shortcodes;
+use BandStage\Frontend\Shortcodes;
 
 $is_edit = $current_news !== null;
 $post_id = $is_edit ? $current_news->id      : 0;

@@ -10,7 +10,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-use BandStage\Public\Shortcodes;
+use BandStage\Frontend\Shortcodes;
 
 $current_uid = get_current_user_id();
 $is_admin    = current_user_can( 'manage_options' );

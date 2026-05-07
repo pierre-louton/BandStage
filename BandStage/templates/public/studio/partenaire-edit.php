@@ -11,7 +11,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-use BandStage\Public\Shortcodes;
+use BandStage\Frontend\Shortcodes;
 
 $is_edit   = $partenaire !== null;
 $post_id   = $is_edit ? $partenaire->id          : 0;

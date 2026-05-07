@@ -113,7 +113,7 @@ class NewsService {
 		wp_send_json_success( [
 			'message'  => __( 'Actualité enregistrée.', 'bandstage' ),
 			'post_id'  => (int) $result,
-			'redirect' => \BandStage\Public\Shortcodes::studio_url( 'dashboard' ),
+			'redirect' => \BandStage\Frontend\Shortcodes::studio_url( 'dashboard' ),
 		] );
 	}
 

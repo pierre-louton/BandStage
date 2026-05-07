@@ -20,9 +20,9 @@ use BandStage\Domain\News\NewsService;
 use BandStage\Domain\Notifications\NotificationService;
 use BandStage\Domain\Partenaires\PartenaireService;
 use BandStage\Domain\Tchache\TchacheService;
-use BandStage\Public\Assets      as PublicAssets;
-use BandStage\Public\PublicController;
-use BandStage\Public\Shortcodes;
+use BandStage\Frontend\Assets      as FrontendAssets;
+use BandStage\Frontend\FrontendController;
+use BandStage\Frontend\Shortcodes;
 
 class Plugin {
 
@@ -179,8 +179,8 @@ class Plugin {
 	}
 
 	private function register_public(): void {
-		$public_ctrl  = new PublicController();
-		$public_assets = new PublicAssets();
+		$public_ctrl  = new FrontendController();
+		$public_assets = new FrontendAssets();
 		$shortcodes   = new Shortcodes();
 
 		$this->loader->add_filter( 'show_admin_bar',       $public_ctrl,   'maybe_hide_admin_bar' );

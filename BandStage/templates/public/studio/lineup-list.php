@@ -10,7 +10,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-use BandStage\Public\Shortcodes;
+use BandStage\Frontend\Shortcodes;
 
 $can_delete = current_user_can( 'manage_options' );
 ?>
