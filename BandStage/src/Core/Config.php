@@ -93,7 +93,7 @@ class Config {
         id          BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
         type_id     BIGINT UNSIGNED NULL DEFAULT NULL,
         name        VARCHAR(150) NOT NULL,
-        description TEXT NOT NULL DEFAULT '',
+        description TEXT NOT NULL,
         logo_path   VARCHAR(255) NOT NULL DEFAULT '',
         website     VARCHAR(255) NOT NULL DEFAULT '',
         email       VARCHAR(150) NOT NULL DEFAULT '',
