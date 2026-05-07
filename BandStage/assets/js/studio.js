@@ -127,15 +127,19 @@ document.querySelectorAll('.js-partenaire-delete').forEach(btn => {
     const btn = document.querySelector('[form="bss-partenaire-form"]');
     if (btn) btn.disabled = true;
 
-    const res  = await fetch(BsPublic.ajaxUrl, { method: 'POST', body: formData, credentials: 'same-origin' });
-    const json = await res.json();
-    if (btn) btn.disabled = false;
-
-    if (json.success) {
-      BsToast.show(json.data.message, 'success');
-      setTimeout(() => { window.location.href = json.data.redirect; }, 900);
-    } else {
-      BsToast.show(json.data?.message || BsPublic.i18n.error, 'error');
+    try {
+      const res  = await fetch(BsPublic.ajaxUrl, { method: 'POST', body: formData, credentials: 'same-origin' });
+      const json = await res.json();
+      if (btn) btn.disabled = false;
+      if (json.success) {
+        BsToast.show(json.data.message, 'success');
+        setTimeout(() => { window.location.href = json.data.redirect; }, 900);
+      } else {
+        BsToast.show(json.data?.message || BsPublic.i18n.error, 'error');
+      }
+    } catch {
+      if (btn) btn.disabled = false;
+      BsToast.show(BsPublic.i18n.error, 'error');
     }
   });
 })();
@@ -310,15 +314,19 @@ document.querySelectorAll('.js-concert-delete').forEach(btn => {
     const btn = document.querySelector('[form="bss-concert-form"]');
     if (btn) btn.disabled = true;
 
-    const res  = await fetch(BsPublic.ajaxUrl, { method: 'POST', body: formData, credentials: 'same-origin' });
-    const json = await res.json();
-    if (btn) btn.disabled = false;
-
-    if (json.success) {
-      BsToast.show(json.data.message, 'success');
-      setTimeout(() => { window.location.href = json.data.redirect; }, 900);
-    } else {
-      BsToast.show(json.data?.message || BsPublic.i18n.error, 'error');
+    try {
+      const res  = await fetch(BsPublic.ajaxUrl, { method: 'POST', body: formData, credentials: 'same-origin' });
+      const json = await res.json();
+      if (btn) btn.disabled = false;
+      if (json.success) {
+        BsToast.show(json.data.message, 'success');
+        setTimeout(() => { window.location.href = json.data.redirect; }, 900);
+      } else {
+        BsToast.show(json.data?.message || BsPublic.i18n.error, 'error');
+      }
+    } catch {
+      if (btn) btn.disabled = false;
+      BsToast.show(BsPublic.i18n.error, 'error');
     }
   });
 })();

@@ -49,7 +49,6 @@ $page_title = $is_edit
         data-ajax="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>">
 
     <?php wp_nonce_field( BANDSTAGE_NONCE, 'nonce' ); ?>
-    <input type="hidden" name="action"       value="bs_partenaire_save">
     <input type="hidden" name="partenaire_id" value="<?php echo esc_attr( $pid ); ?>">
 
     <!-- Logo -->
