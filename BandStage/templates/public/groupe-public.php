@@ -56,6 +56,14 @@ $band_tagline = esc_html( get_option( 'bs_band_tagline', '' ) );
             <?php if ( $member->styles ) : ?>
               <p class="bs-lineup-card__styles"><?php echo esc_html( $member->styles ); ?></p>
             <?php endif; ?>
+            <?php if ( $member->social_link ) : ?>
+              <a href="<?php echo esc_url( $member->social_link ); ?>"
+                 class="bs-lineup-card__social"
+                 target="_blank"
+                 rel="noopener noreferrer">
+                <?php esc_html_e( 'Réseaux sociaux', 'bandstage' ); ?>
+              </a>
+            <?php endif; ?>
           </div>
 
         </div>

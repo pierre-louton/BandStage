@@ -572,6 +572,21 @@
   display    : block;
 }
 
+.bs-lineup-card__social {
+  display        : inline-block;
+  margin-top     : 8px;
+  font-family    : var(--bs-font-ui);
+  font-size      : .75rem;
+  letter-spacing : 1px;
+  text-transform : uppercase;
+  color          : var(--bs-accent);
+  text-decoration: none;
+}
+
+.bs-lineup-card__social:hover {
+  text-decoration: underline;
+}
+
 /* ============================================================
    9. HUMEURS / STUDIO PUBLIC (préfixe bs-humeur-)
    ============================================================ */
