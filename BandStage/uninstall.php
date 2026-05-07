@@ -22,7 +22,7 @@ $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}bandstage_notifications" );
 // -------------------------------------------------------------------------
 $options = [
   'bs_band_name', 'bs_band_tagline', 'bs_band_city', 'bs_band_email',
-  'bs_bg_color_start', 'bs_bg_color_end', ' bs_accent_color', 'bs_cream_color',
+  'bs_bg_color_start', 'bs_bg_color_end', 'bs_accent_color', 'bs_cream_color',
   'bs_ticker_enabled', 'bs_ticker_source', 'bs_ticker_items', 'bs_ticker_speed',
   'bs_tchache_enabled', 'bs_tchache_moderation', 'bs_tchache_max_length',
   'bs_page_accueil', 'bs_page_tchache', 'bs_page_profil',
@@ -35,26 +35,30 @@ for ( $i = 1; $i <= 6; $i++ ) {
   $options[] = "bs_box_{$i}_icon";
 }
 
-foreach ( $options as $opt ) {
-  delete_option( $opt );
-}
-
 // -------------------------------------------------------------------------
-// 3. Pages BandStage (trash + suppression définitive)
+// 3. Pages créées à l'activation — collect IDs before deleting options
 // -------------------------------------------------------------------------
 $page_options = [ 'bs_page_accueil', 'bs_page_tchache', 'bs_page_profil',
                   'bs_page_studio',  'bs_page_partenaires', 'bs_page_concerts', 'bs_page_groupe' ];
 
-// Ces options ont déjà été supprimées, donc on cherche directement les pages.
-$pages = get_posts( [
-  'post_type'      => 'page',
-  'post_status'    => 'any',
-  'posts_per_page' => -1,
-  's'              => 'BandStage —',
-  'fields'         => 'ids',
-] );
+$page_ids_to_delete = [];
+foreach ( $page_options as $opt ) {
+  $id = (int) get_option( $opt );
+  if ( $id > 0 ) {
+    $page_ids_to_delete[] = $id;
+  }
+}
 
-foreach ( $pages as $page_id ) {
+// 2. Options générales
+foreach ( $options as $opt ) {
+  delete_option( $opt );
+}
+foreach ( $page_options as $opt ) {
+  delete_option( $opt );
+}
+
+// Delete pages by exact ID
+foreach ( $page_ids_to_delete as $page_id ) {
   wp_delete_post( $page_id, true );
 }
 
