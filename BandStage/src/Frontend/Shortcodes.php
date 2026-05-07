@@ -12,6 +12,7 @@ namespace BandStage\Frontend;
 
 defined( 'ABSPATH' ) || exit;
 
+use BandStage\Domain\Concerts\ConcertService;
 use BandStage\Domain\Lineup\LineupService;
 use BandStage\Domain\News\NewsService;
 use BandStage\Domain\Partenaires\PartenaireService;
@@ -25,6 +26,7 @@ class Shortcodes {
 		add_shortcode( 'bandstage_profil',     [ $this, 'profil' ] );
 		add_shortcode( 'bandstage_studio',     [ $this, 'studio' ] );
 		add_shortcode( 'bandstage_partenaires',[ $this, 'partenaires' ] );
+		add_shortcode( 'bandstage_concerts',   [ $this, 'concerts' ] );
 		add_shortcode( 'bandstage_groupe',     [ $this, 'groupe' ] );
 	}
 
@@ -125,13 +127,47 @@ class Shortcodes {
 		$view   = sanitize_key( $_GET['bs_view'] ?? 'list' );
 
 		if ( 'edit' === $view ) {
-			$post_id     = absint( $_GET['bs_id'] ?? 0 );
-			$partenaire  = $post_id ? $service->get( $post_id ) : null;
-			$types       = get_terms( [ 'taxonomy' => 'bs_type_partenaire', 'hide_empty' => false ] );
+			$post_id    = absint( $_GET['bs_id'] ?? 0 );
+			$partenaire = $post_id ? $service->get( $post_id ) : null;
+			$types      = $service->get_types();
 			include $routes['partenaires']['edit'];
 		} else {
 			$partenaires = $service->get_all();
 			include $routes['partenaires']['list'];
+		}
+
+		return ob_get_clean();
+	}
+
+	// -------------------------------------------------------------------------
+	// [bandstage_concerts]
+	//   Visiteur  → liste des concerts à venir
+	//   Auteur+   → CRUD concerts
+	// -------------------------------------------------------------------------
+
+	public function concerts(): string {
+		$service = new ConcertService();
+		ob_start();
+		Assets::maybe_inject_dynamic_css();
+
+		if ( ! current_user_can( 'edit_posts' ) ) {
+			$concerts = $service->get_upcoming();
+			include BANDSTAGE_PLUGIN_DIR . 'templates/public/concerts-public.php';
+			return ob_get_clean();
+		}
+
+		$routes = include BANDSTAGE_PLUGIN_DIR . 'config/routes.php';
+		$view   = sanitize_key( $_GET['bs_view'] ?? 'list' );
+
+		if ( 'edit' === $view ) {
+			$concert_id         = absint( $_GET['bs_id'] ?? 0 );
+			$concert            = $concert_id ? $service->get( $concert_id ) : null;
+			$partenaire_service = new \BandStage\Domain\Partenaires\PartenaireService();
+			$all_partenaires    = $partenaire_service->get_all();
+			include $routes['concerts']['edit'];
+		} else {
+			$concerts = $service->get_all();
+			include $routes['concerts']['list'];
 		}
 
 		return ob_get_clean();
@@ -193,6 +229,18 @@ class Shortcodes {
 		$args = [ 'bs_view' => $view ];
 		if ( $post_id ) {
 			$args['bs_id'] = $post_id;
+		}
+		return add_query_arg( $args, $url );
+	}
+
+	public static function concerts_url( string $view = 'list', int $id = 0 ): string {
+		$url = get_permalink( (int) get_option( 'bs_page_concerts' ) );
+		if ( ! $url ) {
+			return '#';
+		}
+		$args = [ 'bs_view' => $view ];
+		if ( $id ) {
+			$args['bs_id'] = $id;
 		}
 		return add_query_arg( $args, $url );
 	}
