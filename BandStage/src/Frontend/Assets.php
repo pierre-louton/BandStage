@@ -125,6 +125,22 @@ class Assets {
 				return true;
 			}
 		}
+
+		// Fallback : la page n'est pas dans les options (créée manuellement,
+		// option non synchronisée) — on détecte la présence d'un shortcode.
+		$post = get_queried_object();
+		if ( $post instanceof \WP_Post ) {
+			$shortcodes = [
+				'bandstage_homepage', 'bandstage_tchache', 'bandstage_profil',
+				'bandstage_studio',   'bandstage_partenaires', 'bandstage_groupe',
+			];
+			foreach ( $shortcodes as $tag ) {
+				if ( has_shortcode( $post->post_content, $tag ) ) {
+					return true;
+				}
+			}
+		}
+
 		return false;
 	}
 
@@ -135,6 +151,18 @@ class Assets {
 				return true;
 			}
 		}
+
+		// Fallback : même logique que is_bandstage_page().
+		$post = get_queried_object();
+		if ( $post instanceof \WP_Post ) {
+			$studio_shortcodes = [ 'bandstage_studio', 'bandstage_partenaires', 'bandstage_groupe' ];
+			foreach ( $studio_shortcodes as $tag ) {
+				if ( has_shortcode( $post->post_content, $tag ) ) {
+					return true;
+				}
+			}
+		}
+
 		return false;
 	}
 
