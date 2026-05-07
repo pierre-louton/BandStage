@@ -36,7 +36,7 @@ class LogoUploader {
         $ext   = strtolower( $check['ext'] ?? '' );
 
         if ( ! in_array( $ext, self::ALLOWED, true ) ) {
-            return new \WP_Error( 'invalid_type', __( 'Type de fichier non autorisé (jpg, png, webp, svg).', 'bandstage' ) );
+            return new \WP_Error( 'invalid_type', __( 'Type de fichier non autorisé (jpg, png, webp).', 'bandstage' ) );
         }
 
         $upload_dir = wp_upload_dir();
