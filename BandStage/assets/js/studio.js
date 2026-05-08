@@ -330,3 +330,118 @@ document.querySelectorAll('.js-concert-delete').forEach(btn => {
     }
   });
 })();
+
+// ============================================================
+// 11. MORCEAU — delete
+// ============================================================
+document.querySelectorAll('.js-morceau-delete').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    if (!confirm(BsPublic.i18n.confirm)) return;
+    btn.disabled = true;
+    const json = await bsAjax('bs_morceau_delete', { morceau_id: btn.dataset.id });
+
+    if (json.success) {
+      BsToast.show(json.data.message, 'success');
+      const row = btn.closest('.bss-morceau-item');
+      if (row) { row.style.opacity = '0'; setTimeout(() => row.remove(), 300); }
+    } else {
+      BsToast.show(json.data?.message || BsPublic.i18n.error, 'error');
+      btn.disabled = false;
+    }
+  });
+});
+
+// ============================================================
+// 12. MORCEAU — save (FormData pour multi-select style_ids[])
+// ============================================================
+(function () {
+  const form = document.getElementById('bss-morceau-form');
+  if (!form) return;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    formData.set('action', 'bs_morceau_save');
+    formData.set('nonce', BsPublic.nonce);
+    const btn = document.querySelector('[form="bss-morceau-form"]');
+    if (btn) btn.disabled = true;
+
+    try {
+      const res  = await fetch(BsPublic.ajaxUrl, { method: 'POST', body: formData, credentials: 'same-origin' });
+      const json = await res.json();
+      if (btn) btn.disabled = false;
+      if (json.success) {
+        BsToast.show(json.data.message, 'success');
+        setTimeout(() => { window.location.href = json.data.redirect; }, 900);
+      } else {
+        BsToast.show(json.data?.message || BsPublic.i18n.error, 'error');
+      }
+    } catch {
+      if (btn) btn.disabled = false;
+      BsToast.show(BsPublic.i18n.error, 'error');
+    }
+  });
+})();
+
+// ============================================================
+// 13. STYLE — delete
+// ============================================================
+$(document).on('click', '.js-style-delete', async function () {
+  if (!confirm(BsPublic.i18n.confirm)) return;
+  const btn  = $(this);
+  const form = new FormData();
+  form.append('action', 'bs_style_delete');
+  form.append('style_id', btn.data('id'));
+  form.append('nonce', BsPublic.nonce);
+  try {
+    const res  = await fetch(BsPublic.ajaxUrl, { method: 'POST', body: form, credentials: 'same-origin' });
+    const json = await res.json();
+    if (json.success) {
+      BsToast.show(json.data.message, 'success');
+      btn.closest('tr').remove();
+    } else {
+      BsToast.show(json.data?.message || BsPublic.i18n.error, 'error');
+    }
+  } catch {
+    BsToast.show(BsPublic.i18n.error, 'error');
+  }
+});
+
+// ============================================================
+// 14. STYLE — save (inline form)
+// ============================================================
+(function ($) {
+  const styleForm = document.getElementById('bss-style-form');
+  if (!styleForm) return;
+
+  styleForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = new FormData(styleForm);
+    data.set('action', 'bs_style_save');
+    data.set('nonce', BsPublic.nonce);
+    try {
+      const res  = await fetch(BsPublic.ajaxUrl, { method: 'POST', body: data, credentials: 'same-origin' });
+      const json = await res.json();
+      if (json.success) {
+        const d   = json.data;
+        const img = d.image_url
+          ? `<img src="${$('<span>').text(d.image_url).html()}" class="bss-styles-table__thumb" loading="lazy">`
+          : '<span class="bss-styles-table__noimg">—</span>';
+        $('#bss-styles-list').append(
+          `<tr data-id="${d.style_id}">
+             <td>${$('<span>').text(d.nom_style).html()}</td>
+             <td>${img}</td>
+             <td><button type="button" class="bss-btn bss-btn--sm bss-btn--danger js-style-delete"
+                 data-id="${d.style_id}" data-nonce="${BsPublic.nonce}">Supprimer</button></td>
+           </tr>`
+        );
+        styleForm.reset();
+        BsToast.show(json.data.message, 'success');
+      } else {
+        BsToast.show(json.data?.message || BsPublic.i18n.error, 'error');
+      }
+    } catch {
+      BsToast.show(BsPublic.i18n.error, 'error');
+    }
+  });
+})(jQuery);
