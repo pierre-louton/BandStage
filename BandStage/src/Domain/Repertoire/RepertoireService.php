@@ -121,11 +121,140 @@ class RepertoireService {
     }
 
     // -------------------------------------------------------------------------
-    // AJAX handlers — implémentés dans la prochaine tâche
+    // AJAX — Morceau
     // -------------------------------------------------------------------------
 
-    public function ajax_save(): void {}
-    public function ajax_delete(): void {}
-    public function ajax_style_save(): void {}
-    public function ajax_style_delete(): void {}
+    public function ajax_save(): void {
+        check_ajax_referer( BANDSTAGE_NONCE, 'nonce' );
+
+        if ( ! current_user_can( 'edit_posts' ) ) {
+            wp_send_json_error( [ 'message' => __( 'Accès refusé.', 'bandstage' ) ], 403 );
+        }
+
+        global $wpdb;
+        $table = Config::table_repertoire();
+        $pivot = Config::table_rep_ref();
+
+        $id            = absint( $_POST['morceau_id'] ?? 0 );
+        $nom_artiste   = sanitize_text_field( wp_unslash( $_POST['nom_artiste']   ?? '' ) );
+        $nom_morceau   = sanitize_text_field( wp_unslash( $_POST['nom_morceau']   ?? '' ) );
+        $remarque      = sanitize_textarea_field( wp_unslash( $_POST['remarque']      ?? '' ) );
+        $icone_artiste = sanitize_text_field( wp_unslash( $_POST['icone_artiste'] ?? '' ) );
+        $style_ids     = array_map( 'absint', (array) ( $_POST['style_ids'] ?? [] ) );
+
+        if ( empty( $nom_artiste ) ) {
+            wp_send_json_error( [ 'message' => __( 'Le nom de l\'artiste est obligatoire.', 'bandstage' ) ] );
+        }
+        if ( empty( $nom_morceau ) ) {
+            wp_send_json_error( [ 'message' => __( 'Le nom du morceau est obligatoire.', 'bandstage' ) ] );
+        }
+
+        $data = [
+            'nom_artiste'   => $nom_artiste,
+            'nom_morceau'   => $nom_morceau,
+            'remarque'      => $remarque,
+            'icone_artiste' => $icone_artiste,
+        ];
+
+        if ( $id ) {
+            $data['updated_at'] = current_time( 'mysql' );
+            $wpdb->update( $table, $data, [ 'id' => $id ] );
+        } else {
+            $wpdb->insert( $table, $data );
+            $id = (int) $wpdb->insert_id;
+        }
+
+        // Mettre à jour le pivot
+        $wpdb->delete( $pivot, [ 'repertoire_id' => $id ] );
+        foreach ( $style_ids as $sid ) {
+            if ( $sid > 0 ) {
+                $wpdb->insert( $pivot, [ 'repertoire_id' => $id, 'reference_id' => $sid ] );
+            }
+        }
+
+        wp_send_json_success( [
+            'message'  => __( 'Morceau enregistré.', 'bandstage' ),
+            'redirect' => \BandStage\Frontend\Shortcodes::references_url( 'list' ),
+        ] );
+    }
+
+    public function ajax_delete(): void {
+        check_ajax_referer( BANDSTAGE_NONCE, 'nonce' );
+
+        if ( ! current_user_can( 'edit_posts' ) ) {
+            wp_send_json_error( [ 'message' => __( 'Accès refusé.', 'bandstage' ) ], 403 );
+        }
+
+        global $wpdb;
+        $id = absint( $_POST['morceau_id'] ?? 0 );
+
+        if ( ! $id ) {
+            wp_send_json_error( [ 'message' => __( 'Identifiant manquant.', 'bandstage' ) ] );
+        }
+
+        $wpdb->delete( Config::table_rep_ref(),    [ 'repertoire_id' => $id ] );
+        $wpdb->delete( Config::table_repertoire(), [ 'id'            => $id ] );
+
+        wp_send_json_success( [ 'message' => __( 'Morceau supprimé.', 'bandstage' ) ] );
+    }
+
+    // -------------------------------------------------------------------------
+    // AJAX — Style
+    // -------------------------------------------------------------------------
+
+    public function ajax_style_save(): void {
+        check_ajax_referer( BANDSTAGE_NONCE, 'nonce' );
+
+        if ( ! current_user_can( 'edit_posts' ) ) {
+            wp_send_json_error( [ 'message' => __( 'Accès refusé.', 'bandstage' ) ], 403 );
+        }
+
+        global $wpdb;
+        $table     = Config::table_references();
+        $nom_style = sanitize_text_field( wp_unslash( $_POST['nom_style'] ?? '' ) );
+        $image_url = esc_url_raw( wp_unslash( $_POST['image_url'] ?? '' ) );
+
+        if ( empty( $nom_style ) ) {
+            wp_send_json_error( [ 'message' => __( 'Le nom du style est obligatoire.', 'bandstage' ) ] );
+        }
+
+        $result = $wpdb->insert(
+            $table,
+            [ 'nom_style' => $nom_style, 'image_url' => $image_url ],
+            [ '%s', '%s' ]
+        );
+
+        if ( false === $result ) {
+            wp_send_json_error( [ 'message' => __( 'Ce style existe déjà.', 'bandstage' ) ] );
+        }
+
+        $style_id = (int) $wpdb->insert_id;
+
+        wp_send_json_success( [
+            'message'   => __( 'Style ajouté.', 'bandstage' ),
+            'style_id'  => $style_id,
+            'nom_style' => $nom_style,
+            'image_url' => $image_url,
+        ] );
+    }
+
+    public function ajax_style_delete(): void {
+        check_ajax_referer( BANDSTAGE_NONCE, 'nonce' );
+
+        if ( ! current_user_can( 'edit_posts' ) ) {
+            wp_send_json_error( [ 'message' => __( 'Accès refusé.', 'bandstage' ) ], 403 );
+        }
+
+        global $wpdb;
+        $id = absint( $_POST['style_id'] ?? 0 );
+
+        if ( ! $id ) {
+            wp_send_json_error( [ 'message' => __( 'Identifiant manquant.', 'bandstage' ) ] );
+        }
+
+        $wpdb->delete( Config::table_rep_ref(),   [ 'reference_id' => $id ] );
+        $wpdb->delete( Config::table_references(), [ 'id'          => $id ] );
+
+        wp_send_json_success( [ 'message' => __( 'Style supprimé.', 'bandstage' ) ] );
+    }
 }
