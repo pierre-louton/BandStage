@@ -26,7 +26,7 @@ $options = [
   'bs_ticker_enabled', 'bs_ticker_source', 'bs_ticker_items', 'bs_ticker_speed',
   'bs_tchache_enabled', 'bs_tchache_moderation', 'bs_tchache_max_length',
   'bs_page_accueil', 'bs_page_tchache', 'bs_page_profil',
-  'bs_page_studio', 'bs_page_partenaires', 'bs_page_concerts', 'bs_page_groupe',
+  'bs_page_studio', 'bs_page_partenaires', 'bs_page_concerts', 'bs_page_groupe', 'bs_page_references',
 ];
 
 for ( $i = 1; $i <= 6; $i++ ) {
@@ -39,7 +39,7 @@ for ( $i = 1; $i <= 6; $i++ ) {
 // 3. Pages créées à l'activation — collect IDs before deleting options
 // -------------------------------------------------------------------------
 $page_options = [ 'bs_page_accueil', 'bs_page_tchache', 'bs_page_profil',
-                  'bs_page_studio',  'bs_page_partenaires', 'bs_page_concerts', 'bs_page_groupe' ];
+                  'bs_page_studio',  'bs_page_partenaires', 'bs_page_concerts', 'bs_page_groupe', 'bs_page_references' ];
 
 $page_ids_to_delete = [];
 foreach ( $page_options as $opt ) {
@@ -69,6 +69,13 @@ $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}bandstage_concert_partenaires
 $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}bandstage_concerts" );
 $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}bandstage_partenaires" );
 $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}bandstage_partenaire_types" );
+
+// -------------------------------------------------------------------------
+// 5b. Tables répertoire
+// -------------------------------------------------------------------------
+$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}bandstage_rep_ref" );
+$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}bandstage_repertoire" );
+$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}bandstage_references" );
 
 // -------------------------------------------------------------------------
 // 5. Logos uploadés

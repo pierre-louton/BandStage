@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
 class Assets {
 
 	/** Pages nécessitant l'interface Studio (wp_enqueue_media). */
-	private array $studio_pages = [ 'bs_page_studio', 'bs_page_partenaires', 'bs_page_groupe', 'bs_page_concerts' ];
+	private array $studio_pages = [ 'bs_page_studio', 'bs_page_partenaires', 'bs_page_groupe', 'bs_page_concerts', 'bs_page_references' ];
 
 	public function enqueue(): void {
 		if ( ! $this->is_bandstage_page() ) {
@@ -117,7 +117,7 @@ class Assets {
 	private function is_bandstage_page(): bool {
 		$page_options = [
 			'bs_page_accueil', 'bs_page_tchache', 'bs_page_profil',
-			'bs_page_studio',  'bs_page_partenaires', 'bs_page_groupe', 'bs_page_concerts',
+			'bs_page_studio',  'bs_page_partenaires', 'bs_page_groupe', 'bs_page_concerts', 'bs_page_references',
 		];
 		$current_id = get_queried_object_id();
 		foreach ( $page_options as $option ) {
@@ -132,7 +132,7 @@ class Assets {
 		if ( $post instanceof \WP_Post ) {
 			$shortcodes = [
 				'bandstage_homepage', 'bandstage_tchache', 'bandstage_profil',
-				'bandstage_studio',   'bandstage_partenaires', 'bandstage_groupe', 'bandstage_concerts',
+				'bandstage_studio',   'bandstage_partenaires', 'bandstage_groupe', 'bandstage_concerts', 'bandstage_references',
 			];
 			foreach ( $shortcodes as $tag ) {
 				if ( has_shortcode( $post->post_content, $tag ) ) {
@@ -155,7 +155,7 @@ class Assets {
 		// Fallback : même logique que is_bandstage_page().
 		$post = get_queried_object();
 		if ( $post instanceof \WP_Post ) {
-			$studio_shortcodes = [ 'bandstage_studio', 'bandstage_partenaires', 'bandstage_groupe', 'bandstage_concerts' ];
+			$studio_shortcodes = [ 'bandstage_studio', 'bandstage_partenaires', 'bandstage_groupe', 'bandstage_concerts', 'bandstage_references' ];
 			foreach ( $studio_shortcodes as $tag ) {
 				if ( has_shortcode( $post->post_content, $tag ) ) {
 					return true;

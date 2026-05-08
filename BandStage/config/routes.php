@@ -24,6 +24,10 @@ return [
 		'list' => $tpl . 'concert-list.php',
 		'edit' => $tpl . 'concert-edit.php',
 	],
+	'references' => [
+		'list' => $tpl . 'repertoire-list.php',
+		'edit' => $tpl . 'repertoire-edit.php',
+	],
 	'groupe' => [
 		'list' => $tpl . 'lineup-list.php',
 		'edit' => $tpl . 'lineup-edit.php',

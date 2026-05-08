@@ -20,6 +20,7 @@ use BandStage\Domain\Members\MemberService;
 use BandStage\Domain\News\NewsService;
 use BandStage\Domain\Notifications\NotificationService;
 use BandStage\Domain\Partenaires\PartenaireService;
+use BandStage\Domain\Repertoire\RepertoireService;
 use BandStage\Domain\Tchache\TchacheService;
 use BandStage\Frontend\Assets      as FrontendAssets;
 use BandStage\Frontend\FrontendController;
@@ -94,6 +95,7 @@ class Plugin {
 			'studio'      => [ 'title' => 'BandStage — Studio',      'shortcode' => '[bandstage_studio]',     'template' => 'elementor_canvas' ],
 			'partenaires' => [ 'title' => 'BandStage — Partenaires', 'shortcode' => '[bandstage_partenaires]','template' => 'elementor_canvas' ],
 			'concerts'    => [ 'title' => 'BandStage — Concerts',   'shortcode' => '[bandstage_concerts]',   'template' => 'elementor_canvas' ],
+			'references'  => [ 'title' => 'BandStage — Répertoire',  'shortcode' => '[bandstage_references]',  'template' => 'elementor_canvas' ],
 			'groupe'      => [ 'title' => 'BandStage — Le groupe',   'shortcode' => '[bandstage_groupe]',     'template' => 'elementor_canvas' ],
 		];
 
@@ -202,6 +204,7 @@ class Plugin {
 			new NewsService(),
 			new PartenaireService(),
 			new ConcertService(),
+			new RepertoireService(),
 			new MemberService(),
 			new NotificationService(),
 			new LineupService(),
