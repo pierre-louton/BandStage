@@ -46,6 +46,21 @@ class Config {
 		return $wpdb->prefix . 'bandstage_concert_partenaires';
 	}
 
+	public static function table_repertoire(): string {
+		global $wpdb;
+		return $wpdb->prefix . 'bandstage_repertoire';
+	}
+
+	public static function table_references(): string {
+		global $wpdb;
+		return $wpdb->prefix . 'bandstage_references';
+	}
+
+	public static function table_rep_ref(): string {
+		global $wpdb;
+		return $wpdb->prefix . 'bandstage_rep_ref';
+	}
+
 	// -------------------------------------------------------------------------
 	// Création des tables à l'activation
 	// -------------------------------------------------------------------------
@@ -132,6 +147,33 @@ class Config {
         PRIMARY KEY (concert_id, partenaire_id)
     ) $charset_collate;";
 
+		$sql_repertoire = "CREATE TABLE IF NOT EXISTS " . self::table_repertoire() . " (
+    id             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    nom_artiste    VARCHAR(150) NOT NULL,
+    nom_morceau    VARCHAR(150) NOT NULL,
+    remarque       TEXT NOT NULL DEFAULT '',
+    icone_artiste  VARCHAR(10) NOT NULL DEFAULT '',
+    created_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY nom_artiste (nom_artiste)
+) $charset_collate;";
+
+		$sql_references = "CREATE TABLE IF NOT EXISTS " . self::table_references() . " (
+    id         BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    nom_style  VARCHAR(100) NOT NULL,
+    image_url  VARCHAR(255) NOT NULL DEFAULT '',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY nom_style (nom_style)
+) $charset_collate;";
+
+		$sql_rep_ref = "CREATE TABLE IF NOT EXISTS " . self::table_rep_ref() . " (
+    repertoire_id BIGINT UNSIGNED NOT NULL,
+    reference_id  BIGINT UNSIGNED NOT NULL,
+    PRIMARY KEY (repertoire_id, reference_id)
+) $charset_collate;";
+
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql_messages );
 		dbDelta( $sql_notifications );
@@ -139,6 +181,9 @@ class Config {
 		dbDelta( $sql_partenaires );
 		dbDelta( $sql_concerts );
 		dbDelta( $sql_pivot );
+		dbDelta( $sql_repertoire );
+		dbDelta( $sql_references );
+		dbDelta( $sql_rep_ref );
 	}
 
 	// -------------------------------------------------------------------------
