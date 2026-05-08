@@ -148,31 +148,31 @@ class Config {
     ) $charset_collate;";
 
 		$sql_repertoire = "CREATE TABLE IF NOT EXISTS " . self::table_repertoire() . " (
-    id             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    nom_artiste    VARCHAR(150) NOT NULL,
-    nom_morceau    VARCHAR(150) NOT NULL,
-    remarque       TEXT NOT NULL DEFAULT '',
-    icone_artiste  VARCHAR(10) NOT NULL DEFAULT '',
-    created_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    KEY nom_artiste (nom_artiste)
-) $charset_collate;";
+        id             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+        nom_artiste    VARCHAR(150) NOT NULL,
+        nom_morceau    VARCHAR(150) NOT NULL,
+        remarque       TEXT NOT NULL,
+        icone_artiste  VARCHAR(10) NOT NULL DEFAULT '',
+        created_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        PRIMARY KEY (id),
+        KEY nom_artiste (nom_artiste)
+    ) $charset_collate;";
 
 		$sql_references = "CREATE TABLE IF NOT EXISTS " . self::table_references() . " (
-    id         BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    nom_style  VARCHAR(100) NOT NULL,
-    image_url  VARCHAR(255) NOT NULL DEFAULT '',
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    UNIQUE KEY nom_style (nom_style)
-) $charset_collate;";
+        id         BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+        nom_style  VARCHAR(100) NOT NULL,
+        image_url  VARCHAR(255) NOT NULL DEFAULT '',
+        created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (id),
+        UNIQUE KEY nom_style (nom_style)
+    ) $charset_collate;";
 
 		$sql_rep_ref = "CREATE TABLE IF NOT EXISTS " . self::table_rep_ref() . " (
-    repertoire_id BIGINT UNSIGNED NOT NULL,
-    reference_id  BIGINT UNSIGNED NOT NULL,
-    PRIMARY KEY (repertoire_id, reference_id)
-) $charset_collate;";
+        repertoire_id BIGINT UNSIGNED NOT NULL,
+        reference_id  BIGINT UNSIGNED NOT NULL,
+        PRIMARY KEY (repertoire_id, reference_id)
+    ) $charset_collate;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql_messages );
