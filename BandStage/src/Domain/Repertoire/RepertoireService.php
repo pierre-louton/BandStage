@@ -162,6 +162,9 @@ class RepertoireService {
         } else {
             $wpdb->insert( $table, $data );
             $id = (int) $wpdb->insert_id;
+            if ( ! $id ) {
+                wp_send_json_error( [ 'message' => __( 'Erreur lors de l\'enregistrement.', 'bandstage' ) ] );
+            }
         }
 
         // Mettre à jour le pivot
