@@ -886,3 +886,86 @@
   font-weight: 600;
   margin-right: 4px;
 }
+
+/* ============================================================
+   RÉPERTOIRE PUBLIC
+   ============================================================ */
+.bs-ref-section {
+  padding      : var(--bs-pad);
+  max-width    : var(--bs-max-w);
+  margin-inline: auto;
+  margin-bottom: 32px;
+}
+
+.bs-ref-section__header {
+  display    : flex;
+  align-items: center;
+  gap        : 14px;
+  margin-bottom: 16px;
+}
+
+.bs-ref-section__img {
+  width        : 56px;
+  height       : 56px;
+  object-fit   : cover;
+  border-radius: var(--bs-r-md);
+  flex-shrink  : 0;
+}
+
+.bs-ref-section__title {
+  font-family   : var(--bs-font-brand);
+  font-size     : 1.3rem;
+  color         : var(--bs-accent);
+  margin        : 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.bs-ref-list {
+  list-style: none;
+  margin    : 0;
+  padding   : 0;
+  display   : flex;
+  flex-direction: column;
+  gap       : 10px;
+}
+
+.bs-ref-item {
+  background    : var(--bs-surface-3);
+  border-radius : var(--bs-r-card);
+  padding       : 12px 16px;
+  display       : flex;
+  align-items   : baseline;
+  flex-wrap     : wrap;
+  gap           : 6px;
+  backdrop-filter: blur(8px);
+}
+
+.bs-ref-item__icon {
+  font-size  : 1.2rem;
+  flex-shrink: 0;
+}
+
+.bs-ref-item__artiste {
+  font-family: var(--bs-font-ui);
+  font-size  : .9rem;
+  color      : var(--bs-accent);
+  font-weight: 600;
+}
+
+.bs-ref-item__sep {
+  color  : rgba(255,255,255,.35);
+  padding: 0 2px;
+}
+
+.bs-ref-item__morceau {
+  color    : var(--bs-label-inv);
+  font-size: .95rem;
+}
+
+.bs-ref-item__remarque {
+  font-size: .8rem;
+  color    : rgba(255,255,255,.5);
+  flex-basis: 100%;
+  margin-top: 2px;
+}
