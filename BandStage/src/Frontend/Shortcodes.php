@@ -16,6 +16,7 @@ use BandStage\Domain\Concerts\ConcertService;
 use BandStage\Domain\Lineup\LineupService;
 use BandStage\Domain\News\NewsService;
 use BandStage\Domain\Partenaires\PartenaireService;
+use BandStage\Domain\Repertoire\RepertoireService;
 use BandStage\Domain\Tchache\TchacheService;
 
 class Shortcodes {
@@ -28,6 +29,7 @@ class Shortcodes {
 		add_shortcode( 'bandstage_partenaires',[ $this, 'partenaires' ] );
 		add_shortcode( 'bandstage_concerts',   [ $this, 'concerts' ] );
 		add_shortcode( 'bandstage_groupe',     [ $this, 'groupe' ] );
+		add_shortcode( 'bandstage_references', [ $this, 'references' ] );
 	}
 
 	// -------------------------------------------------------------------------
@@ -175,6 +177,40 @@ class Shortcodes {
 	}
 
 	// -------------------------------------------------------------------------
+	// [bandstage_references]
+	//   Visiteur  → liste publique des morceaux groupés par style
+	//   Auteur+   → CRUD morceaux + gestion styles
+	// -------------------------------------------------------------------------
+
+	public function references(): string {
+		$service = new RepertoireService();
+		ob_start();
+		Assets::maybe_inject_dynamic_css();
+
+		if ( ! current_user_can( 'edit_posts' ) ) {
+			$grouped = $service->get_grouped_by_style();
+			include BANDSTAGE_PLUGIN_DIR . 'templates/public/references-public.php';
+			return ob_get_clean();
+		}
+
+		$routes = include BANDSTAGE_PLUGIN_DIR . 'config/routes.php';
+		$view   = sanitize_key( $_GET['bs_view'] ?? 'list' );
+
+		if ( 'edit' === $view ) {
+			$morceau_id  = absint( $_GET['bs_id'] ?? 0 );
+			$morceau     = $morceau_id ? $service->get( $morceau_id ) : null;
+			$all_styles  = $service->get_styles();
+			include $routes['references']['edit'];
+		} else {
+			$morceaux   = $service->get_all();
+			$all_styles = $service->get_styles();
+			include $routes['references']['list'];
+		}
+
+		return ob_get_clean();
+	}
+
+	// -------------------------------------------------------------------------
 	// [bandstage_groupe]
 	//   Visiteur  → grille publique des membres du lineup
 	//   Auteur+   → CRUD membres lineup
@@ -254,6 +290,18 @@ class Shortcodes {
 		$args = [ 'bs_view' => $view ];
 		if ( $post_id ) {
 			$args['bs_id'] = $post_id;
+		}
+		return add_query_arg( $args, $url );
+	}
+
+	public static function references_url( string $view = 'list', int $id = 0 ): string {
+		$url = get_permalink( (int) get_option( 'bs_page_references' ) );
+		if ( ! $url ) {
+			return '#';
+		}
+		$args = [ 'bs_view' => $view ];
+		if ( $id ) {
+			$args['bs_id'] = $id;
 		}
 		return add_query_arg( $args, $url );
 	}
