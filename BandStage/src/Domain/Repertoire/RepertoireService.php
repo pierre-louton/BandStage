@@ -206,13 +206,9 @@ class RepertoireService {
     // -------------------------------------------------------------------------
 
     public function ajax_style_save(): void {
-        error_log( '[BandStage] ajax_style_save: action reçue' );
-
         check_ajax_referer( BANDSTAGE_NONCE, 'nonce' );
-        error_log( '[BandStage] ajax_style_save: nonce OK' );
 
         if ( ! current_user_can( 'edit_posts' ) ) {
-            error_log( '[BandStage] ajax_style_save: accès refusé' );
             wp_send_json_error( [ 'message' => __( 'Accès refusé.', 'bandstage' ) ], 403 );
         }
 
@@ -221,10 +217,7 @@ class RepertoireService {
         $nom_style = sanitize_text_field( wp_unslash( $_POST['nom_style'] ?? '' ) );
         $image_url = esc_url_raw( wp_unslash( $_POST['image_url'] ?? '' ) );
 
-        error_log( '[BandStage] ajax_style_save: table=' . $table . ' nom_style=' . $nom_style );
-
         if ( empty( $nom_style ) ) {
-            error_log( '[BandStage] ajax_style_save: nom_style vide' );
             wp_send_json_error( [ 'message' => __( 'Le nom du style est obligatoire.', 'bandstage' ) ] );
         }
 
@@ -233,8 +226,6 @@ class RepertoireService {
             [ 'nom_style' => $nom_style, 'image_url' => $image_url ],
             [ '%s', '%s' ]
         );
-
-        error_log( '[BandStage] ajax_style_save: result=' . var_export( $result, true ) . ' last_error=' . $wpdb->last_error );
 
         if ( false === $result ) {
             wp_send_json_error( [ 'message' => $wpdb->last_error ?: __( 'Ce style existe déjà.', 'bandstage' ) ] );

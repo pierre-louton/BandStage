@@ -384,14 +384,15 @@ document.querySelectorAll('.js-morceau-delete').forEach(btn => {
 })();
 
 // ============================================================
-// 13. STYLE — delete
+// 13. STYLE — delete (délégation sur document, vanilla JS)
 // ============================================================
-$(document).on('click', '.js-style-delete', async function () {
+document.addEventListener('click', async function (e) {
+  const btn = e.target.closest('.js-style-delete');
+  if (!btn) return;
   if (!confirm(BsPublic.i18n.confirm)) return;
-  const btn  = $(this);
   const form = new FormData();
   form.append('action', 'bs_style_delete');
-  form.append('style_id', btn.data('id'));
+  form.append('style_id', btn.dataset.id);
   form.append('nonce', BsPublic.nonce);
   try {
     const res  = await fetch(BsPublic.ajaxUrl, { method: 'POST', body: form, credentials: 'same-origin' });
