@@ -91,12 +91,17 @@ class Plugin {
 		if ( get_option( 'bs_db_version' ) !== BANDSTAGE_VERSION ) {
 			Config::create_tables();
 			update_option( 'bs_db_version', BANDSTAGE_VERSION );
+			delete_option( 'bs_pages_created' );
 		}
-		self::create_pages();
+		// wp_insert_post() needs $wp_rewrite (init or later) — never at plugins_loaded.
+		if ( ! get_option( 'bs_pages_created' ) ) {
+			add_action( 'init', [ __CLASS__, 'create_missing_pages' ], 20 );
+		}
 	}
 
 	public static function create_missing_pages(): void {
 		self::create_pages();
+		update_option( 'bs_pages_created', '1' );
 	}
 
 	// -------------------------------------------------------------------------
