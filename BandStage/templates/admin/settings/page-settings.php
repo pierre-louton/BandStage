@@ -15,6 +15,9 @@ $tabs       = $settings->get_tabs();
 if ( ! array_key_exists( $active_tab, $tabs ) ) {
 	$active_tab = 'groupe';
 }
+
+$ajax_tabs        = [ 'avance', 'membres', 'notifications', 'partenaires' ];
+$use_settings_api = ! in_array( $active_tab, $ajax_tabs, true );
 ?>
 <div class="wrap bs-admin-wrap">
   <h1><?php esc_html_e( 'Réglages BandStage', 'bandstage' ); ?></h1>
@@ -28,10 +31,14 @@ if ( ! array_key_exists( $active_tab, $tabs ) ) {
     <?php endforeach; ?>
   </nav>
 
+  <?php if ( $use_settings_api ) : ?>
   <form method="post" action="options.php" class="bs-admin-settings-form">
     <?php settings_fields( $settings->group( $active_tab ) ); ?>
     <?php include BANDSTAGE_PLUGIN_DIR . "templates/admin/settings/tab-{$active_tab}.php"; ?>
     <?php submit_button(); ?>
   </form>
+  <?php else : ?>
+    <?php include BANDSTAGE_PLUGIN_DIR . "templates/admin/settings/tab-{$active_tab}.php"; ?>
+  <?php endif; ?>
 
 </div>
