@@ -81,7 +81,7 @@
   });
 
   // ============================================================
-  // 4. CRÉER PAGES MANQUANTES
+  // 4. CRÉER PAGES MANQUANTES / RÉPARER DOUBLONS
   // ============================================================
   $(document).on('click', '.js-create-pages', async function () {
     const btn   = $(this);
@@ -105,6 +105,32 @@
     } catch {
       alert('Erreur réseau.');
       btn.prop('disabled', false).text('Créer les pages manquantes');
+    }
+  });
+
+  $(document).on('click', '.js-repair-pages', async function () {
+    const btn   = $(this);
+    const nonce = btn.data('nonce');
+    if (!confirm('Supprimer les pages en double et corriger les options ? Les doublons seront mis à la corbeille.')) return;
+    btn.prop('disabled', true).text('Réparation en cours…');
+
+    const body = new FormData();
+    body.append('action', 'bs_repair_pages');
+    body.append('nonce',  nonce);
+
+    try {
+      const res  = await fetch(BsAdmin.ajaxUrl, { method: 'POST', body, credentials: 'same-origin' });
+      const json = await res.json();
+      if (json.success) {
+        alert(json.data.message);
+        location.reload();
+      } else {
+        alert(json.data?.message || 'Erreur');
+        btn.prop('disabled', false).text('Réparer les pages (supprimer les doublons)');
+      }
+    } catch {
+      alert('Erreur réseau.');
+      btn.prop('disabled', false).text('Réparer les pages (supprimer les doublons)');
     }
   });
 

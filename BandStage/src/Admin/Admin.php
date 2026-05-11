@@ -17,7 +17,8 @@ use BandStage\Domain\Tchache\TchacheService;
 class Admin {
 
 	public function register_ajax(): void {
-		add_action( 'wp_ajax_bs_create_pages', [ $this, 'ajax_create_pages' ] );
+		add_action( 'wp_ajax_bs_create_pages',  [ $this, 'ajax_create_pages' ] );
+		add_action( 'wp_ajax_bs_repair_pages',  [ $this, 'ajax_repair_pages' ] );
 	}
 
 	public function ajax_create_pages(): void {
@@ -29,6 +30,17 @@ class Admin {
 
 		Plugin::create_missing_pages();
 		wp_send_json_success( [ 'message' => 'Pages créées ou déjà existantes.' ] );
+	}
+
+	public function ajax_repair_pages(): void {
+		check_ajax_referer( BANDSTAGE_NONCE, 'nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( [ 'message' => 'Accès refusé.' ], 403 );
+		}
+
+		Plugin::repair_pages();
+		wp_send_json_success( [ 'message' => 'Pages réparées : doublons supprimés, options mises à jour.' ] );
 	}
 
 	public function add_menus(): void {

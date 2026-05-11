@@ -104,6 +104,78 @@ class Plugin {
 		update_option( 'bs_pages_created', '1' );
 	}
 
+	/**
+	 * Réparation : pour chaque slug BS, retrouve toutes les pages correspondantes,
+	 * garde la meilleure (slug exact ou première publiée), met l'option à jour,
+	 * et met à la corbeille les doublons. Crée si aucune n'existe.
+	 */
+	public static function repair_pages(): void {
+		global $wpdb;
+
+		$pages = [
+			'accueil'     => [ 'title' => 'BandStage — Accueil',     'shortcode' => '[bandstage_homepage]',    'template' => 'elementor_canvas' ],
+			'tchache'     => [ 'title' => 'BandStage — Tchache',     'shortcode' => '[bandstage_tchache]',     'template' => 'elementor_canvas' ],
+			'profil'      => [ 'title' => 'BandStage — Mon Compte',  'shortcode' => '[bandstage_profil]',      'template' => 'elementor_canvas' ],
+			'studio'      => [ 'title' => 'BandStage — Studio',      'shortcode' => '[bandstage_studio]',      'template' => 'elementor_canvas' ],
+			'partenaires' => [ 'title' => 'BandStage — Partenaires', 'shortcode' => '[bandstage_partenaires]', 'template' => 'elementor_canvas' ],
+			'concerts'    => [ 'title' => 'BandStage — Concerts',    'shortcode' => '[bandstage_concerts]',    'template' => 'elementor_canvas' ],
+			'references'  => [ 'title' => 'BandStage — Répertoire',  'shortcode' => '[bandstage_references]',  'template' => 'elementor_canvas' ],
+			'groupe'      => [ 'title' => 'BandStage — Le groupe',   'shortcode' => '[bandstage_groupe]',      'template' => 'elementor_canvas' ],
+		];
+
+		foreach ( $pages as $slug => $data ) {
+			$option_key = 'bs_page_' . $slug;
+			$post_name  = 'bandstage-' . $slug;
+
+			// Trouve toutes les pages publiées/brouillon avec ce slug de base.
+			$all_ids = $wpdb->get_col( $wpdb->prepare(
+				"SELECT ID FROM {$wpdb->posts}
+				 WHERE post_type = 'page'
+				   AND post_status IN ('publish','draft')
+				   AND (post_name = %s OR post_name LIKE %s)
+				 ORDER BY post_name ASC",
+				$post_name,
+				$wpdb->esc_like( $post_name ) . '-%'
+			) );
+
+			if ( empty( $all_ids ) ) {
+				// Aucune page → créer.
+				$new_id = wp_insert_post( [
+					'post_title'   => $data['title'],
+					'post_name'    => $post_name,
+					'post_status'  => 'publish',
+					'post_type'    => 'page',
+					'post_content' => $data['shortcode'],
+				] );
+				if ( $new_id && ! is_wp_error( $new_id ) ) {
+					update_post_meta( $new_id, '_wp_page_template', $data['template'] );
+					update_option( $option_key, $new_id );
+				}
+				continue;
+			}
+
+			// Préférer la page avec le slug exact, sinon prendre la première.
+			$keep_id = (int) $all_ids[0];
+			foreach ( $all_ids as $id ) {
+				if ( get_post_field( 'post_name', (int) $id ) === $post_name ) {
+					$keep_id = (int) $id;
+					break;
+				}
+			}
+
+			update_option( $option_key, $keep_id );
+
+			// Mettre à la corbeille tous les doublons.
+			foreach ( $all_ids as $id ) {
+				if ( (int) $id !== $keep_id ) {
+					wp_trash_post( (int) $id );
+				}
+			}
+		}
+
+		update_option( 'bs_pages_created', '1' );
+	}
+
 	// -------------------------------------------------------------------------
 	// Création des pages
 	// -------------------------------------------------------------------------

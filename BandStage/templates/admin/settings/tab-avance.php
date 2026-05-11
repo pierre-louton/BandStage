@@ -32,4 +32,9 @@ $pages=[
           data-nonce="<?php echo esc_attr(wp_create_nonce(BANDSTAGE_NONCE));?>">
     <?php esc_html_e('Créer les pages manquantes','bandstage');?>
   </button>
+  &nbsp;
+  <button type="button" class="button button-primary js-repair-pages"
+          data-nonce="<?php echo esc_attr(wp_create_nonce(BANDSTAGE_NONCE));?>">
+    <?php esc_html_e('Réparer les pages (supprimer les doublons)','bandstage');?>
+  </button>
 </p>
