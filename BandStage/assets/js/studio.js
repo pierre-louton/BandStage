@@ -409,10 +409,29 @@ document.addEventListener('click', async function (e) {
 });
 
 // ============================================================
-// 14. STYLE — save (inline form)
+// 14. STYLE — toggle form visibility
 // ============================================================
-(function ($) {
+(function () {
+  const toggleBtn = document.querySelector('.js-style-form-toggle');
+  const formWrap  = document.getElementById('bss-style-form-wrap');
+  if (!toggleBtn || !formWrap) return;
+
+  toggleBtn.addEventListener('click', () => {
+    const hidden = formWrap.hasAttribute('hidden');
+    if (hidden) {
+      formWrap.removeAttribute('hidden');
+    } else {
+      formWrap.setAttribute('hidden', '');
+    }
+  });
+})();
+
+// ============================================================
+// 15. STYLE — save (inline form)
+// ============================================================
+(function () {
   const styleForm = document.getElementById('bss-style-form');
+  const formWrap  = document.getElementById('bss-style-form-wrap');
   if (!styleForm) return;
 
   styleForm.addEventListener('submit', async (e) => {
@@ -426,17 +445,21 @@ document.addEventListener('click', async function (e) {
       if (json.success) {
         const d   = json.data;
         const img = d.image_url
-          ? `<img src="${$('<span>').text(d.image_url).html()}" class="bss-styles-table__thumb" loading="lazy">`
+          ? `<img src="${d.image_url}" class="bss-styles-table__thumb" loading="lazy">`
           : '<span class="bss-styles-table__noimg">—</span>';
-        $('#bss-styles-list').append(
-          `<tr data-id="${d.style_id}">
-             <td>${$('<span>').text(d.nom_style).html()}</td>
-             <td>${img}</td>
-             <td><button type="button" class="bss-btn bss-btn--sm bss-btn--danger js-style-delete"
-                 data-id="${d.style_id}" data-nonce="${BsPublic.nonce}">Supprimer</button></td>
-           </tr>`
-        );
+        const tbody = document.getElementById('bss-styles-list');
+        if (tbody) {
+          const tr = document.createElement('tr');
+          tr.dataset.id = d.style_id;
+          tr.innerHTML = `
+            <td>${escHtml(d.nom_style)}</td>
+            <td>${img}</td>
+            <td><button type="button" class="bss-btn bss-btn--sm bss-btn--danger js-style-delete"
+                data-id="${d.style_id}" data-nonce="${BsPublic.nonce}">Supprimer</button></td>`;
+          tbody.appendChild(tr);
+        }
         styleForm.reset();
+        if (formWrap) formWrap.setAttribute('hidden', '');
         BsToast.show(json.data.message, 'success');
       } else {
         BsToast.show(json.data?.message || BsPublic.i18n.error, 'error');
@@ -445,4 +468,8 @@ document.addEventListener('click', async function (e) {
       BsToast.show(BsPublic.i18n.error, 'error');
     }
   });
-})(jQuery);
+
+  function escHtml(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+})();

@@ -654,29 +654,34 @@
    RÉPERTOIRE STUDIO — section styles
    ============================================================ */
 .bss-styles-section {
-  padding      : var(--bs-pad);
+  padding      : 0;
   max-width    : var(--bs-max-w);
   margin-inline: auto;
   margin-top   : 32px;
   border-top   : 1px solid var(--bs-sep-light);
 }
 
-.bss-styles-section__title {
-  font-family   : var(--bs-font-ui);
-  font-size     : .85rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color         : var(--bs-accent);
-  margin        : 0 0 16px;
+.bss-section-bar {
+  display        : flex;
+  align-items    : center;
+  gap            : 12px;
+  padding        : 12px var(--bs-pad);
+  background     : rgba(0, 0, 0, .2);
+  border-bottom  : 1px solid var(--bs-sep-light);
 }
 
-.bss-styles-section__subtitle {
+.bss-section-bar__title {
+  flex          : 1;
   font-family   : var(--bs-font-ui);
-  font-size     : .8rem;
+  font-size     : 1rem;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color         : rgba(255,255,255,.6);
-  margin        : 20px 0 12px;
+  color         : var(--bs-label-inv);
+}
+
+.bss-styles-table {
+  margin        : 0 var(--bs-pad);
+  margin-top    : 12px;
 }
 
 .bss-styles-table {

@@ -63,7 +63,13 @@ use BandStage\Frontend\Shortcodes;
 
   <!-- ===== SECTION STYLES ===== -->
   <div class="bss-styles-section">
-    <h3 class="bss-styles-section__title"><?php esc_html_e( 'Styles musicaux', 'bandstage' ); ?></h3>
+
+    <div class="bss-section-bar">
+      <span class="bss-section-bar__title"><?php esc_html_e( 'Styles musicaux', 'bandstage' ); ?></span>
+      <button type="button" class="bss-navbar__action bss-btn bss-btn--primary js-style-form-toggle">
+        <?php esc_html_e( '+ Ajouter', 'bandstage' ); ?>
+      </button>
+    </div>
 
     <table class="bss-styles-table">
       <thead>
@@ -98,23 +104,25 @@ use BandStage\Frontend\Shortcodes;
       </tbody>
     </table>
 
-    <h4 class="bss-styles-section__subtitle"><?php esc_html_e( 'Ajouter un style', 'bandstage' ); ?></h4>
-    <form id="bss-style-form">
-      <?php wp_nonce_field( BANDSTAGE_NONCE, 'nonce' ); ?>
-      <div class="bss-form__row">
-        <div class="bss-form__group bss-form__group--grow">
-          <label for="bss-style-name" class="bss-form__label"><?php esc_html_e( 'Nom du style', 'bandstage' ); ?></label>
-          <input type="text" id="bss-style-name" name="nom_style" class="bss-form__input" required
-                 placeholder="<?php esc_attr_e( 'Rock, Jazz, Blues…', 'bandstage' ); ?>">
+    <div id="bss-style-form-wrap" hidden>
+      <form id="bss-style-form">
+        <?php wp_nonce_field( BANDSTAGE_NONCE, 'nonce' ); ?>
+        <div class="bss-form__row">
+          <div class="bss-form__group bss-form__group--grow">
+            <label for="bss-style-name" class="bss-form__label"><?php esc_html_e( 'Nom du style', 'bandstage' ); ?></label>
+            <input type="text" id="bss-style-name" name="nom_style" class="bss-form__input" required
+                   placeholder="<?php esc_attr_e( 'Rock, Jazz, Blues…', 'bandstage' ); ?>">
+          </div>
+          <div class="bss-form__group bss-form__group--grow">
+            <label for="bss-style-img" class="bss-form__label"><?php esc_html_e( 'URL image', 'bandstage' ); ?></label>
+            <input type="url" id="bss-style-img" name="image_url" class="bss-form__input"
+                   placeholder="https://…">
+          </div>
         </div>
-        <div class="bss-form__group bss-form__group--grow">
-          <label for="bss-style-img" class="bss-form__label"><?php esc_html_e( 'URL image', 'bandstage' ); ?></label>
-          <input type="url" id="bss-style-img" name="image_url" class="bss-form__input"
-                 placeholder="https://…">
-        </div>
-      </div>
-      <p><button type="submit" class="bss-btn bss-btn--primary"><?php esc_html_e( 'Ajouter', 'bandstage' ); ?></button></p>
-    </form>
+        <p><button type="submit" class="bss-btn bss-btn--primary"><?php esc_html_e( 'Ajouter', 'bandstage' ); ?></button></p>
+      </form>
+    </div>
+
   </div>
 
   <div class="bss-toast" id="bs-toast" aria-live="polite"></div>
