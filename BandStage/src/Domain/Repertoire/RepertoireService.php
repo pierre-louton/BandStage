@@ -206,7 +206,6 @@ class RepertoireService {
     // -------------------------------------------------------------------------
 
     public function ajax_style_save(): void {
-        error_log( '[BandStage] ajax_style_save called, nom_style=' . ( $_POST['nom_style'] ?? 'MISSING' ) );
         check_ajax_referer( BANDSTAGE_NONCE, 'nonce' );
 
         if ( ! current_user_can( 'edit_posts' ) ) {
