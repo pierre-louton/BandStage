@@ -228,7 +228,7 @@ class RepertoireService {
         );
 
         if ( false === $result ) {
-            wp_send_json_error( [ 'message' => __( 'Ce style existe déjà.', 'bandstage' ) ] );
+            wp_send_json_error( [ 'message' => $wpdb->last_error ?: __( 'Ce style existe déjà.', 'bandstage' ) ] );
         }
 
         $style_id = (int) $wpdb->insert_id;
