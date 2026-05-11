@@ -84,6 +84,19 @@ class Plugin {
 	}
 
 	// -------------------------------------------------------------------------
+	// Upgrade automatique (schema DB + pages) sans réactivation
+	// -------------------------------------------------------------------------
+
+	private static function maybe_upgrade(): void {
+		if ( get_option( 'bs_db_version' ) === BANDSTAGE_VERSION ) {
+			return;
+		}
+		Config::create_tables();
+		self::create_pages();
+		update_option( 'bs_db_version', BANDSTAGE_VERSION );
+	}
+
+	// -------------------------------------------------------------------------
 	// Création des pages
 	// -------------------------------------------------------------------------
 
@@ -156,6 +169,7 @@ class Plugin {
 
 	public function run(): void {
 		$this->load_textdomain();
+		self::maybe_upgrade();
 		$this->register_post_types();
 		$this->register_admin();
 		$this->register_public();

@@ -3,7 +3,7 @@
  * Plugin Name:       BandStage
  * Plugin URI:        https://wordpress.org/plugins/bandstage/
  * Description:       Site mobile-first pour groupes de musique — Actus, Tchache, Membres, Partenaires.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 6.2
  * Requires PHP:      8.1
  * Author:            Pierre Beaubié
@@ -17,7 +17,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // Constantes
-define( 'BANDSTAGE_VERSION',     '1.0.0' );
+define( 'BANDSTAGE_VERSION',     '1.1.0' );
 define( 'BANDSTAGE_PLUGIN_FILE', __FILE__ );
 define( 'BANDSTAGE_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
 define( 'BANDSTAGE_PLUGIN_URL',  plugin_dir_url( __FILE__ ) );

@@ -5,6 +5,8 @@ $pages=[
   'profil'      =>'BandStage — Mon Compte',
   'studio'      =>'BandStage — Studio',
   'partenaires' =>'BandStage — Partenaires',
+  'concerts'    =>'BandStage — Concerts',
+  'references'  =>'BandStage — Répertoire',
   'groupe'      =>'BandStage — Le groupe',
 ];
 ?>
