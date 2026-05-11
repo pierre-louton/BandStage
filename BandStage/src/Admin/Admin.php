@@ -10,10 +10,26 @@ namespace BandStage\Admin;
 
 defined( 'ABSPATH' ) || exit;
 
+use BandStage\Core\Plugin;
 use BandStage\Domain\Members\MemberService;
 use BandStage\Domain\Tchache\TchacheService;
 
 class Admin {
+
+	public function register_ajax(): void {
+		add_action( 'wp_ajax_bs_create_pages', [ $this, 'ajax_create_pages' ] );
+	}
+
+	public function ajax_create_pages(): void {
+		check_ajax_referer( BANDSTAGE_NONCE, 'nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( [ 'message' => 'Accès refusé.' ], 403 );
+		}
+
+		Plugin::create_missing_pages();
+		wp_send_json_success( [ 'message' => 'Pages créées ou déjà existantes.' ] );
+	}
 
 	public function add_menus(): void {
 		// Menu racine

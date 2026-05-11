@@ -88,12 +88,15 @@ class Plugin {
 	// -------------------------------------------------------------------------
 
 	private static function maybe_upgrade(): void {
-		if ( get_option( 'bs_db_version' ) === BANDSTAGE_VERSION ) {
-			return;
+		if ( get_option( 'bs_db_version' ) !== BANDSTAGE_VERSION ) {
+			Config::create_tables();
+			update_option( 'bs_db_version', BANDSTAGE_VERSION );
 		}
-		Config::create_tables();
 		self::create_pages();
-		update_option( 'bs_db_version', BANDSTAGE_VERSION );
+	}
+
+	public static function create_missing_pages(): void {
+		self::create_pages();
 	}
 
 	// -------------------------------------------------------------------------
@@ -200,6 +203,7 @@ class Plugin {
 		$this->loader->add_action( 'admin_menu',             $admin,         'add_menus' );
 		$this->loader->add_action( 'admin_enqueue_scripts',  $admin_assets,  'enqueue' );
 		$this->loader->add_action( 'admin_init',             $settings_page, 'register_settings' );
+		$this->loader->add_action( 'init',                  $admin,         'register_ajax' );
 	}
 
 	private function register_public(): void {

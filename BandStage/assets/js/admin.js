@@ -80,4 +80,32 @@
     btn.prop('disabled', false);
   });
 
+  // ============================================================
+  // 4. CRÉER PAGES MANQUANTES
+  // ============================================================
+  $(document).on('click', '.js-create-pages', async function () {
+    const btn   = $(this);
+    const nonce = btn.data('nonce');
+    btn.prop('disabled', true).text('Création en cours…');
+
+    const body = new FormData();
+    body.append('action', 'bs_create_pages');
+    body.append('nonce',  nonce);
+
+    try {
+      const res  = await fetch(BsAdmin.ajaxUrl, { method: 'POST', body, credentials: 'same-origin' });
+      const json = await res.json();
+      if (json.success) {
+        alert(json.data.message);
+        location.reload();
+      } else {
+        alert(json.data?.message || 'Erreur');
+        btn.prop('disabled', false).text('Créer les pages manquantes');
+      }
+    } catch {
+      alert('Erreur réseau.');
+      btn.prop('disabled', false).text('Créer les pages manquantes');
+    }
+  });
+
 }(jQuery));
